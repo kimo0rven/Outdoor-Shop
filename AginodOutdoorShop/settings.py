@@ -12,16 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from dotenv import load_dotenv
-
-
-
 from pathlib import Path
 
-from django.db.backends.base.base import BaseDatabaseWrapper
-from django.db.backends.mysql.base import DatabaseWrapper
-
-# This forces Django to skip the version check entirely
-DatabaseWrapper.check_database_version_supported = lambda self: None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,20 +78,9 @@ WSGI_APPLICATION = 'AginodOutdoorShop.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'aginod_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -139,9 +120,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-from django.db.backends.mysql.base import DatabaseWrapper
-
-# This disables the "RETURNING" feature that is crashing your migration
-DatabaseWrapper.features_class.can_return_columns_from_insert = False
-DatabaseWrapper.features_class.can_return_rows_from_bulk_insert = False
