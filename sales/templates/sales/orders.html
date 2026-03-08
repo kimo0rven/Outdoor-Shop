@@ -1,0 +1,80 @@
+{% extends 'master.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listings.css' %}" />
+{% endblock %} {% block content %}
+<div>
+	<div class="inventory-card">
+		<div class="card-header">
+			<h3>Order History</h3>
+
+			<div class="card-actions">
+				<div class="search-container">
+					<span class="search-icon">🔍</span>
+					<input type="text" id="order-search" class="search-input" placeholder="Search Order ID..." />
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="inventory-table">
+				<thead>
+					<tr>
+						<th>Order ID</th>
+						<th>Date & Time</th>
+						<th>Source</th>
+						<th>Status</th>
+						<th>Cashier / User</th>
+						<th>Total Amount</th>
+						<th style="text-align: center">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for order in orders %}
+					<tr>
+						<td><span class="name-text" style="font-weight: bold">#{{ order.id }}</span></td>
+
+						<td><span class="sub-text">{{ order.created_at|date:"M d, Y h:i A" }}</span></td>
+
+						<td>
+							<span class="attr-tag" style="font-size: 0.8rem"> {{ order.order_source }} </span>
+						</td>
+
+						<td>
+							{% if order.status == 'completed' %}
+							<span class="status-badge status-in_stock">Completed</span>
+							{% elif order.status == 'pending' %}
+							<span class="status-badge status-draft">Pending</span>
+							{% else %}
+							<span class="status-badge status-inactive">{{ order.status|title }}</span>
+							{% endif %}
+						</td>
+
+						<td>
+							<span class="sub-text">
+								{% if order.processed_by %} {{ order.processed_by.username }} {% elif order.user %} {{
+								order.user.username }} {% else %} Guest {% endif %}
+							</span>
+						</td>
+
+						<td>
+							<span class="name-text" style="font-weight: bold; color: #2ab6d4"
+								>₱{{ order.total_amount }}</span
+							>
+						</td>
+
+						<td style="text-align: center">
+							<button class="btn btn-cancel" style="padding: 4px 10px; font-size: 0.85rem">
+								View Details
+							</button>
+						</td>
+					</tr>
+					{% empty %}
+					<tr>
+						<td colspan="7" class="no-result">No orders have been placed yet.</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

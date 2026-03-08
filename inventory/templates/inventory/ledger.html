@@ -1,0 +1,74 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'inventory/css/listings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="inventory-card">
+    <div class="card-header">
+        <h3>Stock Movement Ledger</h3>
+        <div class="card-actions">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input class="search-input" type="text" id="variant-search" placeholder="Search SKU or Order #...">
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Product / SKU</th>
+                    <th>Type</th>
+                    <th>Change</th>
+                    <th>Balance</th>
+                    <th>Staff</th>
+                    <th>Reference / Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in ledger_entries %}
+                <tr>
+                    <td class="sub-text" style="white-space: nowrap;">
+                        {{ entry.date_created|date:"d M Y" }}<br>
+                        <small>{{ entry.date_created|date:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <strong>{{ entry.variant.sku }}</strong><br>
+                        <small style="color: #718096;">{{ entry.variant.listing.name }} ({{ entry.variant.variant_name }})</small>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ entry.transaction_type }}">
+                            {{ entry.get_transaction_type_display }}
+                        </span>
+                    </td>
+                    <td style="font-weight: bold; font-size: 1rem; color: {% if entry.quantity_changed > 0 %}#2f855a{% else %}#c53030{% endif %};">
+                        {% if entry.quantity_changed > 0 %}+{% endif %}{{ entry.quantity_changed }}
+                    </td>
+                    <td style="font-weight: 600;">{{ entry.new_stock }}</td>
+                    <td class="sub-text">{{ entry.staff.username|default:"System" }}</td>
+                    <td class="sub-text" style="max-width: 200px; font-style: italic;">
+                        {{ entry.reference_note }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #a0aec0;">
+                        No stock movements recorded yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'inventory/js/search_units.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'master.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'inventory/css/listings.css' %}" />
+{% endblock %} {% block extra_js %}
+<script src="{% static 'inventory/js/add_record_slider.js' %}"></script>
+<script src="{% static 'inventory/js/add_record.js' %}"></script>
+<script src="{% static 'inventory/js/edit_record.js' %}"></script>
+<script src="{% static 'inventory/js/update_record.js' %}"></script>
+<script src="{% static 'inventory/js/search_listing.js' %}"></script>
+{% endblock %} {% block content %}
+<div class="inventory-card">
+	<div class="card-header">
+		<h3>Product Catalog (Parent Listings)</h3>
+		<div class="card-actions">
+			<div class="search-container">
+				<span class="search-icon">🔍</span>
+				<input class="search-input" type="text" id="table-search" placeholder="Search..." />
+			</div>
+			<button class="btn btn-save btn-add" id="btn-add-listing">Add Product</button>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="inventory-table">
+			<thead>
+				<tr>
+					<th style="width: 30px"></th>
+					<th style="width: 50px">Image</th>
+					<th>Brand & Product Name</th>
+					<th>Category</th>
+					<th>Vendor</th>
+					<th>MSRP</th>
+					<th style="width: 100px">Status</th>
+					<th>Description</th>
+					<th>Tags</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for listing in listings %}
+				<tr>
+					<td class="action-icon">
+						<span
+							class="edit-listing-btn"
+							title="Edit"
+							style="cursor: pointer"
+							data-id="{{ listing.id }}"
+							data-brand="{{ listing.brand|default:'' }}"
+							data-name="{{ listing.name }}"
+							data-category="{{ listing.category.id }}"
+							data-vendor="{{ listing.vendor|default:'' }}"
+							data-price="{{ listing.base_price|default:'' }}"
+							data-mpn="{{ listing.model_number|default:'' }}"
+							data-tags="{{ listing.tags|default:'' }}"
+							data-status="{{ listing.listing_status }}"
+							data-desc="{{ listing.description|default:'' }}"
+							>🔧</span
+						>
+					</td>
+
+					<td>
+						{% if listing.thumbnail %}
+						<img src="{{ listing.thumbnail.url }}" class="listing-thumbnail" alt="thumb" />
+						{% else %}
+						<div class="listing-no-thumbnail">📷</div>
+						{% endif %}
+					</td>
+
+					<td class="name-text">
+						<span class="listing-brand">{{ listing.brand|default:"No Brand" }}</span><br />
+						<strong>{{ listing.name }}</strong>
+					</td>
+
+					<td><span class="type-icon">📁</span> {{ listing.category.category_name }}</td>
+
+					<td class="sub-text">{{ listing.vendor|default:"-" }}</td>
+
+					<td class="sub-text">{% if listing.base_price %}₱{{ listing.base_price }}{% else %}-{% endif %}</td>
+
+					<td>
+						<span class="status-badge status-{{ listing.listing_status }}">
+							{{ listing.listing_status|title }}
+						</span>
+					</td>
+
+					<td class="sub-text">{{ listing.description|default:"-" }}</td>
+					<td class="sub-text">{{ listing.tags|default:"-" }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="5" class="no-result"></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="side-panel" id="add-listing-panel">
+	<div class="panel-header">
+		<div class="header-left">
+			<button class="icon-btn close-btn" id="close-listing-btn">✕</button>
+			<h4>Add a Product Model</h4>
+		</div>
+		<div class="header-right">
+			<button class="btn btn-cancel" id="cancel-listing-btn">Cancel</button>
+			<button class="btn btn-save" id="save-listing-btn">Save Product</button>
+		</div>
+	</div>
+	<div class="panel-body">
+		<form id="create-listing-form" method="POST" action="{% url 'listings' %}" enctype="multipart/form-data">
+			{% csrf_token %}
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Brand</label>
+					<input type="text" class="form-control" name="brand" placeholder="e.g., Osprey" />
+				</div>
+				<div class="flex-1">
+					<label>Product Name (Model) <span class="required">*</span></label>
+					<input
+						type="text"
+						class="form-control"
+						name="listing_name"
+						placeholder="e.g., Atmos AG 65"
+						required
+					/>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label>Category <span class="required">*</span></label>
+				<select class="form-control" name="category_id" required>
+					<option value="" disabled selected>Select a category...</option>
+					{% for category in categories %}
+					<option value="{{ category.id }}">{{ category.category_name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Vendor / Supplier</label>
+					<input type="text" class="form-control" name="vendor" placeholder="Who supplies this?" />
+				</div>
+				<div class="flex-1">
+					<label>Base Price / MSRP (₱)</label>
+					<input type="number" step="0.01" class="form-control" name="base_price" placeholder="0.00" />
+				</div>
+			</div>
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Model Number (MPN)</label>
+					<input type="text" class="form-control" name="model_number" placeholder="Mfg Part Number" />
+				</div>
+				<div class="flex-1">
+					<label>Tags (Comma separated)</label>
+					<input type="text" class="form-control" name="tags" placeholder="e.g., camping, waterproof" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label>Product Thumbnail</label>
+				<input type="file" class="form-control" name="thumbnail" accept="image/*" />
+			</div>
+
+			<div class="form-group">
+				<label>Listing Status</label>
+				<select class="form-control" name="listing_status">
+					<option value="active" selected>Active</option>
+					<option value="draft">Draft</option>
+					<option value="inactive">Inactive</option>
+					<option value="archived">Archived</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label>Description & Notes</label>
+				<textarea class="form-control" name="description" rows="3" placeholder="General specs..."></textarea>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="side-panel" id="edit-listing-panel">
+	<div class="panel-header">
+		<div class="header-left">
+			<button class="icon-btn close-btn" id="close-edit-btn">✕</button>
+			<h4>Edit Product</h4>
+		</div>
+		<div class="header-right">
+			<button class="btn btn-delete" id="delete-listing-btn">Delete</button>
+			<button class="btn btn-save" id="save-edit-btn">Update Product</button>
+		</div>
+	</div>
+	<div class="panel-body">
+		<form
+			id="edit-listing-form"
+			method="POST"
+			action="{% url 'edit_listing' %}"
+			enctype="multipart/form-data"
+		>
+			{% csrf_token %}
+			<input type="hidden" name="listing_id" id="edit-id" />
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Brand</label>
+					<input type="text" class="form-control" name="brand" id="edit-brand" />
+				</div>
+				<div class="flex-1">
+					<label>Product Name <span class="required">*</span></label>
+					<input type="text" class="form-control" name="listing_name" id="edit-name" required />
+				</div>
+			</div>
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Model Number (MPN)</label>
+					<input type="text" class="form-control" name="model_number" id="edit-mpn" />
+				</div>
+				<div class="flex-1">
+					<label>Tags</label>
+					<input type="text" class="form-control" name="tags" id="edit-tags" />
+				</div>
+			</div>
+
+			<div class="form-group flex-row align-center">
+				<div class="flex-1">
+					<label>Category <span class="required">*</span></label>
+					<select class="form-control" name="category_id" id="edit-category" required>
+						{% for category in categories %}
+						<option value="{{ category.id }}">{{ category.category_name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="flex-1">
+					<label>Vendor / Supplier</label>
+					<input type="text" class="form-control" name="vendor" id="edit-vendor" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label>Base Price (₱)</label>
+				<input type="number" step="0.01" class="form-control" name="base_price" id="edit-price" />
+			</div>
+
+			<div class="form-group">
+				<label>Change Thumbnail (Leave blank to keep current)</label>
+				<input type="file" class="form-control" name="thumbnail" accept="image/*" />
+			</div>
+
+			<div class="form-group">
+				<label>Listing Status</label>
+				<select class="form-control" name="listing_status" id="edit-status">
+					<option value="active">Active</option>
+					<option value="draft">Draft</option>
+					<option value="inactive">Inactive</option>
+					<option value="archived">Archived</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label>Description & Notes</label>
+				<textarea class="form-control" name="description" id="edit-desc" rows="3"></textarea>
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

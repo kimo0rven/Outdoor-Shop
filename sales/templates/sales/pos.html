@@ -1,0 +1,52 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block title %}
+  POS | Staff - Aginod Outdoor Shop
+{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'sales/css/pos.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+  <div id="pos-data" data-checkout-url="{% url 'sales:pos_checkout' %}"></div>
+
+  <div class="pos-container">
+    <div class="product-side">
+      <div style="position: relative">
+        <input type="text" id="pos-search-input" class="search-bar-input" placeholder="🔍 Scan SKU or Search Gear Name..." />
+        <div id="search-results-container" class="search-results" style="display: none"></div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="category-tabs">
+          <button class="cat-tab active" onclick="filterCategory('all')">All</button>
+          {% for cat in categories %}
+            <button class="cat-tab" onclick="filterCategory('cat-{{ cat.id }}')">{{ cat.category_name }}</button>
+          {% endfor %}
+        </div>
+
+        <div class="quick-items-grid" id="quick-items-grid"></div>
+      </div>
+    </div>
+
+    <div class="cart-side">
+      <h3>Current Order</h3>
+      <div id="cart-list" class="cart-list">
+        <p id="empty-msg" class="cart-list-empty-msg">Cart is empty</p>
+      </div>
+
+      <div class="cart-total-line">
+        <div class="cart-total">
+          <span>Total</span>
+          <span id="cart-total">₱0.00</span>
+        </div>
+        <button id="checkout-btn" class="btn-save cart-checkout-btn" disabled>Checkout</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'sales/js/pos.js' %}"></script>
+{% endblock %}
