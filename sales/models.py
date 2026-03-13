@@ -1,10 +1,9 @@
 from django.db import models
 from django.conf import settings
-from inventory.models import ListingVariant, StaffUser
+from inventory.models import ListingVariant
 from OutdoorShop.models import ShippingAddress
 
 class Order(models.Model):
-    # Constants for Choices
     SOURCE_POS = 'POS'
     SOURCE_WEB = 'Web'
     
@@ -19,8 +18,8 @@ class Order(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(StaffUser, on_delete=models.SET_NULL, null=True, related_name='customer_orders')
-    processed_by = models.ForeignKey(StaffUser, on_delete=models.SET_NULL, null=True, related_name='processed_orders')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,limit_choices_to={'is_customer': True},  related_name='customer_orders')
+    processed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, limit_choices_to={'is_staff': True},related_name='processed_orders')
     
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2)

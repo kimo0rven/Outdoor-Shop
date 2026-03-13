@@ -1,25 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import login
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import ListingVariant, Listing, Category, ProductAttribute, StockLedger
-from django.utils import timezone
-from datetime import timedelta
-
-
-def staff_login(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('inventory')
-    else:
-        form = AuthenticationForm()
-        
-    return render(request, 'inventory/login.html', {'form': form})
-
 
 @login_required(login_url='login')
 def inventory_units(request):
@@ -33,7 +15,6 @@ def inventory_units(request):
         
         parent_listing = Listing.objects.get(id=listing_id)
 
-        # 1. Create the Variant
         variant = ListingVariant.objects.create(
             listing=parent_listing,
             sku=sku,
@@ -43,16 +24,22 @@ def inventory_units(request):
             status=status
         )
 
-        # 2. Handle the Variant Image (FIX)
-        variant_image = request.FILES.get('variant_image') # Match the 'name' attribute in HTML
-        if variant_image:
+        variant_image = request.FILES.getlist('variant_image')
+        
+        for img in variant_image:
             from .models import ListingImage
             ListingImage.objects.create(
                 listing_variant=variant,
-                image_file=variant_image
+                image_filel=img
             )
+        
+        # if variant_image:
+        #     from .models import ListingImage
+        #     ListingImage.objects.create(
+        #         listing_variant=variant,
+        #         image_file=variant_image
+        #     )
 
-        # 3. Handle Attributes (Existing logic)
         names = request.POST.getlist('attr_name[]')
         values = request.POST.getlist('attr_val[]')
         for name, value in zip(names, values):
@@ -62,7 +49,6 @@ def inventory_units(request):
         messages.success(request, f"Variant {sku} created with image!")
         return redirect('units')
 
-    # Updated Query to prefetch images for the table
     variants = ListingVariant.objects.select_related('listing__category').prefetch_related('attributes', 'images').all()
     listings = Listing.objects.all()
     return render(request, 'inventory/units.html', {'variants': variants, 'listings': listings})
@@ -101,9 +87,7 @@ def edit_variant(request):
         
         new_photo = request.FILES.get('variant_image')
         if new_photo:
-            # Option A: Delete old images first to keep it 1-to-1
-            variant.images.all().delete() 
-            # Create the new one
+            variant.images.all().delete()
             from .models import ListingImage
             ListingImage.objects.create(
                 listing_variant=variant,
@@ -190,14 +174,13 @@ def inventory_listings(request):
         'listings': listings,
         'categories': categories
     }
-    return render(request, 'inventory/listings.html', context)
+    return render(request, 'inventory/products.html', context)
 
 @login_required(login_url='login')
 def edit_listing(request):
     if request.method == 'POST':
         listing_id = request.POST.get('listing_id')
         listing = Listing.objects.get(id=listing_id)
-        
         listing.name = request.POST.get('listing_name')
         listing.brand = request.POST.get('brand')
         listing.vendor = request.POST.get('vendor')
@@ -226,7 +209,6 @@ def delete_listing(request, pk):
     
     messages.warning(request, f"Product '{product_name}' and its variants have been permanently removed.")
     return redirect('listings')
-
 
 
 @login_required(login_url='login')

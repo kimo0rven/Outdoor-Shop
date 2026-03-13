@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // --- 1. LISTING UPDATE (Parent Products) ---
-    // These IDs match your listings.html
+
     const saveEditBtn = document.getElementById('save-edit-btn');
     const editListingForm = document.getElementById('edit-listing-form');
 
@@ -17,8 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 2. VARIANT UPDATE (Inventory Units) ---
-    // These IDs match your units.html
     const saveEditVariantBtn = document.getElementById('save-edit-variant-btn');
     const editVariantForm = document.getElementById('edit-variant-form');
 

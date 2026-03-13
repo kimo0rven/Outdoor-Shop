@@ -63,15 +63,13 @@
       </table>
     </div>
 
-    {% comment %}
     <div class="stat-card success" style="border-left-color: #38a169">
       <span class="stat-label">30-Day Revenue</span>
       <span class="stat-value">₱{{ recent_revenue|floatformat:2 }}</span>
     </div>
-    {% endcomment %} {% comment %}
+
     <div class="dashboard-flex" style="display: flex; gap: 20px; margin-top: 20px">
-      {% endcomment %} {% comment %}
-      <div class="dashboard-section" style="flex: 2">
+      {% comment %} <div class="dashboard-section" style="flex: 2">
         <div class="section-title">🕒 Recent Activity</div>
         <ul style="list-style: none; padding: 0">
           {% for log in recent_activity %}
@@ -83,7 +81,7 @@
             </li>
           {% endfor %}
         </ul>
-      </div>
+      </div> {% endcomment %}
 
       <div class="dashboard-section" style="flex: 1">
         <div class="section-title">📊 Top Categories</div>
@@ -100,6 +98,5 @@
         {% endfor %}
       </div>
     </div>
-    {% endcomment %}
   </div>
 {% endblock %}

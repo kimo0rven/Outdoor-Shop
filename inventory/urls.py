@@ -1,4 +1,3 @@
-from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
@@ -16,6 +15,4 @@ urlpatterns = [
     path('category/edit/', views.edit_category, name='edit_category'),
     path('category/delete/<int:pk>/', views.delete_category, name='delete_category'),
     path('ledger/', views.stock_ledger_list, name='ledger'),
-    path('login/', views.staff_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout')
 ]

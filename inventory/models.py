@@ -1,16 +1,14 @@
+import os
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
-
-class StaffUser(AbstractUser):
-    role = models.CharField(max_length=20, default="Staff")
-    
-    class Meta:
-        db_table = 'inventory_staffuser'
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Category(models.Model):
     category_name = models.CharField(max_length=255)
-    date_created = models.DateTimeField(auto_now_add=True) #
+    date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -18,6 +16,11 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category_name
+    
+def listing_thumbnail_path(instance, filename):
+    if instance.id:
+        return f'products/{instance.id}/thumbnail_{filename}'
+    return f'products/temp/thumbnail_{filename}'    
 
 class Listing(models.Model):
     STATUS_CHOICES = [
@@ -30,23 +33,33 @@ class Listing(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='listings')
     name = models.CharField(max_length=255)
     brand = models.CharField(max_length=150, blank=True, null=True) 
-    thumbnail = models.ImageField(upload_to='products/thumbnails/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to=listing_thumbnail_path, blank=True, null=True)
     tags = models.CharField(max_length=255, blank=True, null=True)
     vendor = models.CharField(max_length=150, blank=True, null=True)
     model_number = models.CharField(max_length=100, blank=True, null=True)
     base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     listing_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     description = models.TextField(blank=True)
-    listing_status = models.CharField(max_length=50, default='active')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.brand} {self.name}" if self.brand else self.name
-    
-def variant_image_path(instance, filename):
-    return f'products/{instance.listing_variant.sku}/{filename}'
 
+@receiver(post_save, sender=Listing)
+def move_listing_thumbnail(sender, instance, created, **kwargs):
+    if created and instance.thumbnail:
+        old_path = instance.thumbnail.path
+        new_dir = os.path.join(settings.MEDIA_ROOT, f'products/{instance.id}')
+        new_filename = f"thumbnail_{os.path.basename(old_path)}"
+        new_path = os.path.join(new_dir, new_filename)
+
+        os.makedirs(new_dir, exist_ok=True)
+
+        os.rename(old_path, new_path)
+        relative_new_path = f'products/{instance.id}/{new_filename}'
+        Listing.objects.filter(id=instance.id).update(thumbnail=relative_new_path)
+    
 class ListingVariant(models.Model):
     STATUS_CHOICES = [
         ('in_stock', 'In Stock'),
@@ -85,6 +98,10 @@ class ProductAttribute(models.Model):
     def __cl__ (self):
         return f"{self.name}: {self.value}"
 
+def variant_image_path(instance, filename):
+    product_id = instance.listing_variant.listing.id
+    return f'products/{product_id}/{instance.listing_variant.sku}/{filename}'
+
 class ListingImage(models.Model):
     listing_variant = models.ForeignKey(ListingVariant, on_delete=models.CASCADE, related_name='images')
     image_file = models.ImageField(upload_to=variant_image_path)
@@ -103,7 +120,12 @@ class StockLedger(models.Model):
     ]
 
     variant = models.ForeignKey(ListingVariant, on_delete=models.CASCADE, related_name='ledger_entries')
-    staff = models.ForeignKey(StaffUser, on_delete=models.SET_NULL, null=True)
+    staff = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        limit_choices_to={'is_staff': True}
+    )
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     quantity_changed = models.IntegerField()
     previous_stock = models.IntegerField()

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'OutdoorShop',
     'inventory',
     'sales',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +88,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'inventory.StaffUser'
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Password validation

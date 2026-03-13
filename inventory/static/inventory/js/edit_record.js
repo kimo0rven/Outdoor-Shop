@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('edit-name').value;
             if (id && confirm(`⚠️ Delete Product "${name}" and all its units?`)) {
-                window.location.href = `/inventory/listings/delete/${id}/`;
+                window.location.href = `/manage/inventory/listings/delete/${id}/`;
             }
         });
     }
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const id = document.getElementById('edit-variant-id').value;
             const sku = document.getElementById('edit-variant-sku').value;
             if (id && confirm(`⚠️ Permanently delete unit ${sku}?`)) {
-                window.location.href = `/inventory/units/delete/${id}/`;
+                window.location.href = `/manage/inventory/units/delete/${id}/`;
             }
         });
     }

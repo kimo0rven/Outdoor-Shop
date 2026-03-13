@@ -1,9 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
-from .models import Category, Listing, ListingVariant, ListingImage, StockLedger
-from sales.models import Order, OrderItem
+from inventory.models import Category, Listing, ListingVariant, ListingImage, StockLedger
+from sales.models import Category, Listing, ListingVariant, Order, OrderItem
 
 
 class ListingVariantInline(admin.TabularInline):
@@ -35,19 +32,11 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(StockLedger)
 class InventoryLedgerAdmin(admin.ModelAdmin):
-    list_display = ('variant', 'transaction_type', 'quantity_changed', 'previous_stock', 'new_stock', 'date_created')
-    list_filter = ('transaction_type', 'date_created')
-    search_fields = ('variant__sku', 'reference_note')
-    
-    readonly_fields = (
-        'variant', 
-        'staff', 
-        'transaction_type', 
-        'quantity_changed', 
-        'previous_stock', 
-        'new_stock', 
-        'reference_note', 
-        'date_created'
-    )
+    list_display = ('listing_variant', 'quantity_change', 'reason', 'order', 'date_created')
+    list_filter = ('reason', 'date_created')
+    search_fields = ('listing_variant__SKU', 'reason')
+    readonly_fields = ('listing_variant', 'quantity_change', 'reason', 'order', 'date_created')
+
+
 
 admin.site.register(Category)

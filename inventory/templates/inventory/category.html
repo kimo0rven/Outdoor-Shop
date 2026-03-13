@@ -1,106 +1,105 @@
-{% extends 'master.html' %} 
+{% extends 'master.html' %}
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'inventory/css/listings.css' %}">
+  <link rel="stylesheet" href="{% static 'css/listings.css' %}" />
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'inventory/js/add_record_slider.js' %}"></script>
-    <script src="{% static 'inventory/js/add_record.js' %}"></script>
-    <script src="{% static 'inventory/js/edit_record.js' %}"></script>
-    <script src="{% static 'inventory/js/search_units.js' %}"></script>
+  <script src="{% static 'inventory/js/add_record_slider.js' %}"></script>
+  <script src="{% static 'inventory/js/add_record.js' %}"></script>
+  <script src="{% static 'inventory/js/edit_record.js' %}"></script>
+  <script src="{% static 'inventory/js/search_units.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="inventory-card">
-    <div class="card-header">
-        <h3>All Categories</h3>
-        <div class="card-actions">
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input class="search-input" type="text" id="variant-search" placeholder="Search categories...">
-            </div>
-            <button class="btn btn-save btn-add" id="btn-add-variant">➕ Add Category</button>
+  <div class="main-container">
+    <div class="table-header">
+      <h3>All Categories</h3>
+      <div class="table-header-actions">
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" id="variant-search" placeholder="Search categories..." />
         </div>
+        <button class="btn btn-save btn-add" id="btn-add-variant">Add Category</button>
+      </div>
     </div>
 
     <div class="table-responsive">
-        <table class="inventory-table">
-            <thead>
-                <tr>
-                    <th style="width: 30px;"></th> 
-                    <th>Category Name</th>
-                    <th>Date Created</th>
-                    <th>Last Modified</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for category in categories %}
-                <tr>
-                    <td class="action-icon">
-                        <span class="edit-category-btn" title="Edit" style="cursor: pointer;"
-                              data-id="{{ category.id }}"
-                              data-name="{{ category.category_name }}">🔧</span>
-                    </td>
-                    
-                    <td class="name-text">
-                        <span class="type-icon">📁</span> {{ category.category_name }}
-                    </td>
-                    
-                    <td class="sub-text">{{ category.date_created|date:"d F Y" }}</td>
-                    <td class="sub-text">{{ category.date_modified|date:"d F Y" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 40px; color: #a0aec0;">No categories found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th style="width: 30px;"></th>
+            <th>Category Name</th>
+            <th>Date Created</th>
+            <th>Last Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for category in categories %}
+            <tr>
+              <td class="action-icon">
+                <span class="edit-category-btn" title="Edit" style="cursor: pointer;" data-id="{{ category.id }}" data-name="{{ category.category_name }}">🔧</span>
+              </td>
 
-<div class="side-panel" id="add-variant-panel"> <div class="panel-header">
-        <div class="header-left">
-            <button class="icon-btn close-btn" id="close-variant-btn">✕</button>
-            <h4>Add New Category</h4>
-        </div>
-        <div class="header-right">
-            <button class="btn btn-save" id="save-variant-btn">Save Category</button>
-        </div>
-    </div>
-    <div class="panel-body">
-        <form id="create-variant-form" method="POST" action="{% url 'category' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label>Category Name <span class="required">*</span></label>
-                <input type="text" class="form-control" name="category_name" placeholder="e.g. Tents" required>
-            </div>
-        </form>
-    </div>
-</div>
+              <td class="name-text">
+                <span class="type-icon">📁</span> {{ category.category_name }}
+              </td>
 
-<div class="side-panel" id="edit-category-panel">
+              <td class="sub-text">{{ category.date_created|date:'d F Y' }}</td>
+              <td class="sub-text">{{ category.date_modified|date:'d F Y' }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 40px; color: #a0aec0;">No categories found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="side-panel" id="add-variant-panel">
     <div class="panel-header">
-        <div class="header-left">
-            <button class="icon-btn close-btn" id="close-edit-category-btn">✕</button>
-            <h4>Edit Category</h4>
-        </div>
-        <div class="header-right">
-            <button type="button" class="btn btn-delete" id="delete-category-btn">Delete</button>
-            <button class="btn btn-save" id="save-edit-category-btn">Update</button>
-        </div>
+      <div class="header-left">
+        <button class="icon-btn close-btn" id="close-variant-btn">✕</button>
+        <h4>Add New Category</h4>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-save" id="save-variant-btn">Save Category</button>
+      </div>
     </div>
     <div class="panel-body">
-        <form id="edit-category-form" method="POST" action="{% url 'edit_category' %}">
-            {% csrf_token %}
-            <input type="hidden" name="category_id" id="edit-category-id">
-            <div class="form-group">
-                <label>Category Name <span class="required">*</span></label>
-                <input type="text" class="form-control" name="category_name" id="edit-category-name" required>
-            </div>
-        </form>
+      <form id="create-variant-form" method="POST" action="{% url 'category' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Category Name <span class="required">*</span></label>
+          <input type="text" class="form-control" name="category_name" placeholder="e.g. Tents" required />
+        </div>
+      </form>
     </div>
-</div>
+  </div>
+
+  <div class="side-panel" id="edit-category-panel">
+    <div class="panel-header">
+      <div class="header-left">
+        <button class="icon-btn close-btn" id="close-edit-category-btn">✕</button>
+        <h4>Edit Category</h4>
+      </div>
+      <div class="header-right">
+        <button type="button" class="btn btn-delete" id="delete-category-btn">Delete</button>
+        <button class="btn btn-save" id="save-edit-category-btn">Update</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <form id="edit-category-form" method="POST" action="{% url 'edit_category' %}">
+        {% csrf_token %}
+        <input type="hidden" name="category_id" id="edit-category-id" />
+        <div class="form-group">
+          <label>Category Name <span class="required">*</span></label>
+          <input type="text" class="form-control" name="category_name" id="edit-category-name" required />
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}

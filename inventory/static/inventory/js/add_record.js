@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		addImageInput.addEventListener("change", function () {
 			if (this.files && this.files[0]) {
 				console.log("File selected:", this.files[0].name);
-				// Optional: You could create a small preview <img> here
 			}
 		});
 	}
