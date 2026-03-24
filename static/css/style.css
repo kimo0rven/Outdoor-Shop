@@ -13,7 +13,6 @@ body {
     overflow: hidden; 
 }
 
-/* --- Top Navbar --- */
 .top-navbar { 
     height: 55px; 
     background-color: #e2e4e7;
@@ -35,6 +34,13 @@ body {
     font-size: 1.1rem; 
     font-weight: 600; 
     letter-spacing: 0.5px;
+}
+
+.toggle-btn {
+    cursor: pointer; 
+    font-size: 1.5rem; 
+    margin-right: 15px; 
+    color: #6c757d
 }
 
 .user-profile { 
@@ -142,12 +148,4 @@ body {
     border-radius: 6px; 
     margin-bottom: 10px; 
     border: 1px solid
-}
-
-.app-footer {
-    padding: 15px 20px;
-    text-align: center;
-    color: #88929e;
-    font-size: 0.85rem;
-    border-top: 1px solid #c8cbce; 
 }

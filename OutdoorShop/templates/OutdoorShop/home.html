@@ -1,0 +1,236 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+
+{% block title %}
+  Aginod Outdoor Shop
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/style2.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <main class="content" style="margin: 0; padding: 0; max-width: none;">
+    <div class="hero-section">
+      <video autoplay loop muted playsinline class="hero-video">
+        <source src="{% static 'OutdoorShop/videos/hero-landing-video.mp4' %}" type="video/mp4" />Your browser does not support the video tag.
+      </video>
+
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <h1 class="hero-title">High Quality. Low Impact.</h1>
+        <p class="hero-subtitle">We sell products that align with our sustainability vision of becoming the most progressive, transparent and sustainable outdoor hardgoods shop.</p>
+        <a href="#" class="hero-btn">Shop Now</a>
+      </div>
+    </div>
+
+    <section class="new-arrivals-container">
+      <h2 class="section-title">New Arrivals</h2>
+
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="carouselTrack">
+          {% for listing in new_arrivals %}
+            <div class="product-card">
+              <div class="product-image-wrapper">
+                <span class="badge-new">New</span>
+
+                {% if listing.thumbnail %}
+                  <img src="{{ listing.thumbnail.url }}" alt="{{ listing.name }}" />
+                {% else %}
+                  <img src="{% static 'OutdoorShop/images/placeholder.jpg' %}" alt="No image available" />
+                {% endif %}
+              </div>
+
+              <div class="product-info">
+                <h3 class="product-name">{{ listing.name }}</h3>
+
+                <p class="product-price">
+                  {% if listing.base_price %}
+                    ₱{{ listing.base_price }}
+                  {% else %}
+                    <span style="color: #777; font-size: 0.9em;">Price TBA</span>
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <button class="carousel-nav prev" id="prevBtn"><i class="material-icons">&#xe5cb;</i></button>
+      <button class="carousel-nav next" id="nextBtn"><i class="material-icons">&#xe5cc;</i></button>
+    </section>
+
+    <section class="repair-banner">
+      <div class="repair-content">
+        <span class="overline">Innovation Unusual</span>
+        <h2>How to care for and repair your gear.</h2>
+        <a href="#" class="btn-pill-white">Videos & Guides</a>
+      </div>
+    </section>
+
+    <section class="activities-section">
+      <div class="activities-grid">
+        <div class="activity-card">
+          <div class="activity-image-wrapper">
+            <img src="{% static 'OutdoorShop/images/5052147.jpg' %}" alt="Camping" />
+          </div>
+          <h3>Camping</h3>
+          <div class="activity-links">
+            <a href="#">Explore</a>
+            <a href="#">Men's</a>
+            <a href="#">Women's</a>
+          </div>
+        </div>
+
+        <div class="activity-card">
+          <div class="activity-image-wrapper">
+            <img src="{% static 'OutdoorShop/images/9790264.jpg' %}" alt="Trail Running" />
+          </div>
+          <h3>Trail Running</h3>
+          <div class="activity-links">
+            <a href="#">Explore</a>
+            <a href="#">Men's</a>
+            <a href="#">Women's</a>
+          </div>
+        </div>
+
+        <div class="activity-card">
+          <div class="activity-image-wrapper">
+            <img src="{% static 'OutdoorShop/images/2577274.jpg' %}" alt="Fly Fishing" />
+          </div>
+          <h3>Lifestyle</h3>
+          <div class="activity-links">
+            <a href="#">Explore</a>
+            <a href="#">Men's</a>
+            <a href="#">Women's</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="conquer-section">
+      <div class="conquer-content">
+        <div class="conquer-badge">
+          <h2>CONQUER THE OUTDOORS WITH AGINOD</h2>
+        </div>
+        <p>Where every trail leads to triumph</p>
+        <a href="#" class="hero-btn">SHOP NOW</a>
+      </div>
+    </section>
+
+    <section class="shop-category">
+      <h2 class="category-heading">SHOP BY CATEGORY</h2>
+      <div class="category-grid">
+        <div class="feature-block">
+          <div class="feature-img-wrapper">
+            <img src="{% static '/OutdoorShop/images/6271677.jpg' %}" alt="Runners" />
+          </div>
+          <div class="feature-bottom">
+            <p>
+              <strong>New Arrivals.</strong> Our latest lineup delivers the perfect balance of performance, comfort and simplicity.
+            </p>
+            <a href="#" class="hero-btn" style="background-color: black; color: white">SHOP NOW</a>
+          </div>
+        </div>
+
+        <div class="sub-grid">
+          <div class="sub-card">
+            <img src="{% static '/OutdoorShop/images/13542485.jpg' %}" alt="Backpacking Packs" />
+            <h3>BACKPACKING PACKS</h3>
+          </div>
+          <div class="sub-card">
+            <img src="{% static '/OutdoorShop/images/755871.jpg' %}" alt="Women's Footwera" />
+            <h3>WOMEN'S FOOTWEAR</h3>
+          </div>
+          <div class="sub-card">
+            <img src="{% static '/OutdoorShop/images/5531409.jpg' %}" alt="Best Sellers" />
+            <h3>BEST SELLERS</h3>
+          </div>
+          <div class="sub-card">
+            <img src="{% static 'OutdoorShop/images/9508451.jpg' %}" alt="Food & Supplements" />
+            <h3>FOOD & SUPPLEMENTS</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-split">
+      <div class="impact-content">
+        <div class="impact-icon"></div>
+        <h2>BORN FROM THE WILD</h2>
+        <p>At Aginod, our essence is forged in the untamed wilderness. Founded by extreme adventurers for adventurers, we know firsthand that the right gear can mean the difference between a story of triumph and a lesson in resilience. Our mission? To equip the bold—the trail runners, hikers, and mountaineers—with outdoor apparel, accessories, and gear that stand up to the ultimate tests of nature.</p>
+        <a href="#" class="hero-btn" style="background-color: black; color: white">SHOP NOW</a>
+      </div>
+      <div class="impact-image">
+        <img src="{% static '/OutdoorShop/images/HOOSUS-1733_Sustainability_Update.jpg' %}" alt="Nature" />
+      </div>
+    </section>
+
+    <section class="brands-section">
+      <div class="brands-container">
+        <div class="brands-grid">
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/leki_logo.png' %}" alt="LEKI" /></a>
+            <a href="#" class="brand-label">LEKI &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/osprey_logo.jpg' %}" alt="Osprey" /></a>
+            <a href="#" class="brand-label">Osprey &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/patagonia_logo.jpg' %}" alt="Patagonia" /></a>
+            <a href="#" class="brand-label">Patagonia &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/arcteryx_logo.jpg' %}" alt="Arcteryx" /></a>
+            <a href="#" class="brand-label">Arc'teryx &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/columbia-sportswear_logo.png' %}" alt="Columbia" /></a>
+            <a href="#" class="brand-label">Columbia &rarr;</a>
+          </div>
+        </div>
+
+        <div class="brands-grid">
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/mont-bell_logo.jpg' %}" alt="montbell" /></a>
+            <a href="#" class="brand-label">MONT-BELL &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/Naturehike_logo.jpg' %}" alt="Naturehike" /></a>
+            <a href="#" class="brand-label">NatureHike &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/T8_logo.jpeg' %}" alt="T8" /></a>
+            <a href="#" class="brand-label">T8 &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/Nitecore_logo.jpg' %}" alt="38Explore" /></a>
+            <a href="#" class="brand-label">Nitecore &rarr;</a>
+          </div>
+
+          <div class="brand-item">
+            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/salomon_logo.jpg' %}" alt="Salomon" /></a>
+            <a href="#" class="brand-label">Salomon &rarr;</a>
+          </div>
+        </div>
+
+        <div class="view-all-container">
+          <a href="#" class="hero-btn" style="background-color: black; color: white">View all</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'OutdoorShop/js/carousel-slider.js' %}"></script>
+  {% block extra_js %}
+
+  {% endblock %}
+{% endblock %}

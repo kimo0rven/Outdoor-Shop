@@ -1,4 +1,5 @@
 {% extends 'master.html' %} {% load static %} {% block extra_css %}
+  {% load humanize %}
   <link rel="stylesheet" href="{% static 'css/listings.css' %}" />
 {% endblock %} {% block extra_js %}
   <script src="{% static 'inventory/js/add_record_slider.js' %}"></script>
@@ -8,7 +9,7 @@
   <script src="{% static 'inventory/js/search_units.js' %}"></script>
 {% endblock %} {% block content %}
   <div class="main-container">
-    <div class="table-header">
+    <div class="table-header" style="position: sticky !important; top: 0; z-index: 10;">
       <h3>All Inventory Units</h3>
       <div class="table-header-actions">
         <div class="search-container">
@@ -96,7 +97,7 @@
               <td class="sub-text">
                 <strong>{{ variant.current_stock_quantity }}</strong> units
               </td>
-              <td class="sub-text">₱{{ variant.price }}</td>
+              <td class="sub-text">₱{{ variant.price|floatformat:2|intcomma }}</td>
             </tr>
           {% empty %}
             <tr>
@@ -125,7 +126,7 @@
         <div class="form-group">
           <label>Variant Images</label>
           <input type="file" class="form-control" name="variant_images" id="add-variant-image" accept="image/*" multiple />
-          <p class="small-text">You can select multiple photos for this SKU (e.g., different angles of the specific color).</p>
+          <p class="small-text">You can select multiple photos for this SKU.</p>
         </div>
 
         <div class="form-group">
@@ -160,20 +161,23 @@
             <label>SKU (Serial) <span class="required">*</span></label>
             <input type="text" class="form-control" name="sku" required />
           </div>
+        </div>
+
+        <div class="form-group flex-row align-center">
           <div class="flex-1">
             <label>Price (₱) <span class="required">*</span></label>
             <input type="number" step="0.01" class="form-control" name="price" required />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label>Initial Status</label>
-          <select class="form-control" name="status">
-            <option value="in_stock" selected>In Stock</option>
-            <option value="out_of_stock">Out of Stock</option>
-            <option value="discontinued">Discontinued</option>
-            <option value="damaged">Damaged/Hold</option>
-          </select>
+          <div class="flex-1">
+            <label>Initial Status</label>
+            <select class="form-control" name="status">
+              <option value="in_stock" selected>In Stock</option>
+              <option value="out_of_stock">Out of Stock</option>
+              <option value="discontinued">Discontinued</option>
+              <option value="damaged">Damaged/Hold</option>
+            </select>
+          </div>
         </div>
       </form>
     </div>

@@ -1,0 +1,25 @@
+#result_list td, #result_list th {
+    vertical-align: middle !important;
+}
+
+#result_list input, #result_list select {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#result_list a {
+    text-decoration: none !important;
+}
+
+#result_list .related-widget-wrapper-link {
+    display: none !important;
+}
+
+#result_list .related-widget-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+#result_list a {
+    text-decoration: none !important;
+}

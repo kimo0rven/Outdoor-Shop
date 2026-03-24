@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
                 ('brand', models.CharField(blank=True, max_length=150, null=True)),
-                ('thumbnail', models.ImageField(blank=True, null=True, upload_to=inventory.models.listing_thumbnail_path)),
+                ('thumbnail', models.ImageField(blank=True, null=True, upload_to=inventory.models.generate_image_path)),
                 ('tags', models.CharField(blank=True, max_length=255, null=True)),
                 ('vendor', models.CharField(blank=True, max_length=150, null=True)),
                 ('model_number', models.CharField(blank=True, max_length=100, null=True)),
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
             name='ListingImage',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image_file', models.ImageField(upload_to=inventory.models.variant_image_path)),
+                ('image_file', models.ImageField(upload_to=inventory.models.generate_image_path)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
                 ('listing_variant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='inventory.listingvariant')),

@@ -1,4 +1,5 @@
 {% extends 'master.html' %} {% load static %} {% block extra_css %}
+  {% load humanize %}
   <link rel="stylesheet" href="{% static 'css/listings.css' %}" />
 {% endblock %} {% block extra_js %}
   <script src="{% static 'inventory/js/add_record_slider.js' %}"></script>
@@ -27,6 +28,7 @@
             <th style="width: 50px">Image</th>
             <th>Brand & Product Name</th>
             <th>Category</th>
+            <th>Activity</th>
             <th>Vendor</th>
             <th>MSRP</th>
             <th style="width: 100px">Status</th>
@@ -38,7 +40,7 @@
           {% for listing in listings %}
             <tr>
               <td class="action-icon">
-                <span class="edit-listing-btn" title="Edit" style="cursor: pointer" data-id="{{ listing.id }}" data-brand="{{ listing.brand|default:'' }}" data-name="{{ listing.name }}" data-category="{{ listing.category.id }}" data-vendor="{{ listing.vendor|default:'' }}" data-price="{{ listing.base_price|default:'' }}" data-mpn="{{ listing.model_number|default:'' }}" data-tags="{{ listing.tags|default:'' }}" data-status="{{ listing.listing_status }}" data-desc="{{ listing.description|default:'' }}">🔧</span>
+                <span class="edit-listing-btn" title="Edit" style="cursor: pointer" data-id="{{ listing.id }}" data-brand="{{ listing.brand|default:'' }}" data-name="{{ listing.name }}" data-category="{{ listing.category.id }}" data-activity="{{ listing.activity.id|default:'' }}" data-vendor="{{ listing.vendor|default:'' }}" data-price="{{ listing.base_price|default:'' }}" data-mpn="{{ listing.model_number|default:'' }}" data-tags="{{ listing.tags|default:'' }}" data-status="{{ listing.listing_status }}" data-desc="{{ listing.description|default:'' }}" data-image="{% if listing.thumbnail %}{{ listing.thumbnail.url }}{% endif %}">🔧</span>
               </td>
 
               <td>
@@ -58,11 +60,15 @@
                 <span class="type-icon">📁</span> {{ listing.category.category_name }}
               </td>
 
+              <td>
+                <span class="type-icon"></span> {{ listing.activity.activity_name }}
+              </td>
+
               <td class="sub-text">{{ listing.vendor|default:'-' }}</td>
 
               <td class="sub-text">
                 {% if listing.base_price %}
-                  ₱{{ listing.base_price }}
+                  ₱{{ listing.base_price|floatformat:2|intcomma }}
                 {% else %}
                   -
                 {% endif %}
@@ -106,20 +112,33 @@
             <label>Brand</label>
             <input type="text" class="form-control" name="brand" placeholder="e.g., Osprey" />
           </div>
+        </div>
+        <div class="form-group flex-row align-center">
           <div class="flex-1">
             <label>Product Name (Model) <span class="required">*</span></label>
             <input type="text" class="form-control" name="listing_name" placeholder="e.g., Atmos AG 65" required />
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Category <span class="required">*</span></label>
-          <select class="form-control" name="category_id" required>
-            <option value="" disabled selected>Select a category...</option>
-            {% for category in categories %}
-              <option value="{{ category.id }}">{{ category.category_name }}</option>
-            {% endfor %}
-          </select>
+        <div class="form-group flex-row align-center">
+          <div class="flex-1">
+            <label>Category <span class="required">*</span></label>
+            <select class="form-control" name="category_id" required>
+              <option value="" disabled selected>Select a category...</option>
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="flex-1">
+            <label>Activity</label>
+            <select class="form-control" name="activity_id">
+              <option value="" disabled selected>Select an acitivity...</option>
+              {% for activity in activities %}
+                <option value="{{ activity.id }}">{{ activity.activity_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
 
         <div class="form-group flex-row align-center">
@@ -146,7 +165,7 @@
 
         <div class="form-group">
           <label>Product Thumbnail</label>
-          <input type="file" class="form-control" name="thumbnail" accept="image/*" />
+          <input type="file" class="form-control" name="thumbnail" accept="image/*" multiple />
         </div>
 
         <div class="form-group">
@@ -183,6 +202,12 @@
       <form id="edit-listing-form" method="POST" action="{% url 'edit_listing' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="listing_id" id="edit-id" />
+
+        <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+          <div id="current-listing-image-display" style="background: #f8f9fa; border: 1px dashed #cbd5e0; border-radius: 8px; padding: 10px; min-height: 140px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: #a0aec0;">Loading image...</span>
+          </div>
+        </div>
 
         <div class="form-group flex-row align-center">
           <div class="flex-1">
@@ -221,14 +246,30 @@
           </div>
         </div>
 
+        <div class="form-group flex-row align-center">
+          <div class="flex-1">
+            <label>Activity</label>
+            <select class="form-control" name="activity_id" id="edit-activity">
+              {% for activity in activities %}
+                <option value="{{ activity.id }}">{{ activity.activity_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="flex-1">
+            <label>Vendor / Supplier</label>
+            <input type="text" class="form-control" name="vendor" id="edit-vendor" />
+          </div>
+        </div>
+
         <div class="form-group">
           <label>Base Price (₱)</label>
           <input type="number" step="0.01" class="form-control" name="base_price" id="edit-price" />
         </div>
 
         <div class="form-group">
-          <label>Change Thumbnail (Leave blank to keep current)</label>
-          <input type="file" class="form-control" name="thumbnail" accept="image/*" />
+          <label>Add/Change Product Images (Select multiple)</label>
+          <input type="file" class="form-control" name="thumbnail" accept="image/*" multiple />
+          <small style="color: #777; display: block; margin-top: 4px;">Leave blank to keep current images.</small>
         </div>
 
         <div class="form-group">

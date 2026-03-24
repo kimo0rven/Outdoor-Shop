@@ -26,5 +26,4 @@ echo.
 echo  Type 'exit' to close this window.
 echo -------------------------------------------------------
 
-:: Use /k to keep the session open and active
 cmd /k

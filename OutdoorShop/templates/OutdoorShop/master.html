@@ -1,0 +1,177 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        Aginod Outdoor Shop
+      {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'OutdoorShop/css/style.css' %}" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    {% block extra_css %}
+
+    {% endblock %}
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="main-header">
+        <div class="header-container">
+          <div class="logo">
+            <a href="/">Aginod</a>
+          </div>
+          <nav class="main-nav">
+            <ul>
+              <li>
+                <a href="#">Featured</a>
+              </li>
+              <li>
+                <a href="#">Men's</a>
+              </li>
+              <li>
+                <a href="#">Women's</a>
+              </li>
+              <li>
+                <a href="#">Kids'</a>
+              </li>
+              <li>
+                <a href="#">Packs & Gear</a>
+              </li>
+              <li>
+                <a href="#">Food & Beer</a>
+              </li>
+              <li>
+                <a href="#">Sports</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="header-actions">
+            <div class="search-container" id="search-trigger">
+              <span class="search-icon" style="left:30px"></span>
+              <input type="search" class="search-input" placeholder="Search" readonly />
+            </div>
+
+            <div class="search-overlay" id="search-overlay">
+              <div class="search-overlay-content">
+                <div class="search-overlay-header">
+                  <div class="search-overlay-input-group">
+                    <span class="search-icon" style="position: absolute; left: 15px; top: 15px;"></span>
+                    <input type="search" id="expanded-search-input" />
+                  </div>
+                  <button class="cancel-search-btn" id="cancel-search-btn">Cancel</button>
+                </div>
+
+                <div class="popular-searches">
+                  <h3>Popular searches</h3>
+                  <ul>
+                    <li>
+                      <a href="#">Backpacking tents</a>
+                    </li>
+                    <li>
+                      <a href="#">Osprey daypacks</a>
+                    </li>
+                    <li>
+                      <a href="#">Waterproof hiking boots</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="icon-links">
+              <a href="#"><i class="material-icons">&#xe7fd;</i></a>
+              <a href="#"><i class="material-icons">&#xe8cc;</i></a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="main-wrapper">
+        {% comment %} <main class="content">
+          {% endcomment %}
+          {% block content %}
+
+          {% endblock %}
+          {% comment %}
+        </main> {% endcomment %}
+
+        <footer class="site-footer">
+          <div class="footer-top">
+            <div class="footer-badge">
+              <div class="guarantee-box">
+                <strong>AGINOD<br />OUTDOOR</strong>
+                <span class="guarantee-sub">ANY REASON.<br />ANY PRODUCT.<br />ANY ERA.</span>
+              </div>
+            </div>
+
+            <div class="footer-nav">
+              <div class="footer-column">
+                <h3>COMPANY</h3>
+                <ul>
+                  <li>
+                    <a href="#">About Us</a>
+                  </li>
+                  <li>
+                    <a href="#">History</a>
+                  </li>
+                  <li>
+                    <a href="#">Sustainability</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="footer-column">
+                <h3>CUSTOMER SUPPORT</h3>
+                <ul>
+                  <li>
+                    <a href="#">Customer Support Center</a>
+                  </li>
+                  <li>
+                    <a href="#">Knowledge Base</a>
+                  </li>
+                  <li>
+                    <a href="#">Size and Fit</a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="footer-column">
+                <h3>RESOURCES</h3>
+                <ul>
+                  <li>
+                    <a href="#">Rewards</a>
+                  </li>
+                  <li>
+                    <a href="#">Affiliate Program</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="footer-social">
+              <h3>STAY IN TOUCH!</h3>
+              <div class="social-icons">
+                <a href="https://www.instagram.com/aginodoutdoors.ph/"><img src="{% static 'OutdoorShop/images/icons/instagram.svg' %}" alt="IG" /></a>
+                <a href="https://www.facebook.com/Aginodoutdoorshop.ph/"><img src="{% static 'OutdoorShop/images/icons/facebook.svg' %}" alt="FB" /></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-illustration"></div>
+
+          <div class="footer-bottom">
+            <div class="legal-text">© 2026 Aginod. All prices are in PHP.</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="{% static 'OutdoorShop/js/search_bar.js' %}"></script>
+    {% block extra_js %}
+
+    {% endblock %}
+  </body>
+</html>

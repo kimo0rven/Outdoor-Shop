@@ -9,12 +9,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('edit-brand').value = this.dataset.brand;
                 document.getElementById('edit-name').value = this.dataset.name;
                 document.getElementById('edit-category').value = this.dataset.category;
+                document.getElementById('edit-activity').value = this.dataset.activity;
                 document.getElementById('edit-vendor').value = this.dataset.vendor;
                 document.getElementById('edit-price').value = this.dataset.price;
                 document.getElementById('edit-mpn').value = this.dataset.mpn;
                 document.getElementById('edit-tags').value = this.dataset.tags;
                 document.getElementById('edit-status').value = this.dataset.status;
                 document.getElementById('edit-desc').value = this.dataset.desc;
+                
+                const imageUrl = this.getAttribute('data-image');
+                const imageDisplay = document.getElementById('current-listing-image-display');
+                console.log(imageDisplay)
+
+                if (imageDisplay) {
+                    if (imageUrl && imageUrl !== "") {
+                        imageDisplay.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; height: 130px; object-fit: contain; border-radius: 4px;">`;
+                    } else {
+                        imageDisplay.innerHTML = `<span style="color: #a0aec0;">No Image Uploaded</span>`;
+                    }
+                }
+
                 editListingPanel.classList.add('open');
             });
         });
@@ -69,6 +83,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const editCategoryPanel = document.getElementById('edit-category-panel');
     const editCategoryBtns = document.querySelectorAll('.edit-category-btn');
+    const saveEditCategoryBtn = document.getElementById('save-edit-category-btn');
+    const editCategoryForm = document.getElementById('edit-category-form');
+
     if (editCategoryBtns.length > 0 && editCategoryPanel) {
         editCategoryBtns.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -78,6 +95,35 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+
+    if (saveEditCategoryBtn && editCategoryForm) {
+        saveEditCategoryBtn.addEventListener('click', () => {
+            editCategoryForm.submit();
+        });
+    }
+
+    const editActivityPanel = document.getElementById('edit-activity-panel');
+    const editActivityBtns = document.querySelectorAll('.edit-activity-btn');
+    const saveEditActivityBtn = document.getElementById('save-edit-activity-btn');
+    const editActivityForm = document.getElementById('edit-activity-form');
+
+    if (editActivityBtns.length > 0 && editActivityPanel) {
+        editActivityBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('edit-activity-id').value = this.dataset.id;
+                document.getElementById('edit-activity-name').value = this.dataset.name;
+                editActivityPanel.classList.add('open');
+            });
+        });
+    }
+
+    if (saveEditActivityBtn && editActivityForm) {
+        saveEditActivityBtn.addEventListener('click', () => {
+            editActivityForm.submit();
+        });
+    }
+
+    
 
     const deleteListingBtn = document.getElementById('delete-listing-btn');
     if (deleteListingBtn) {
@@ -101,7 +147,18 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    document.querySelectorAll('.close-btn, .btn-cancel, #close-edit-category-btn').forEach(btn => {
+    const deleteActivityBtn = document.getElementById('delete-activity-btn');
+    if (deleteActivityBtn) {
+        deleteActivityBtn.addEventListener('click', function() {
+            const id = document.getElementById('edit-activity-id').value;
+            const name = document.getElementById('edit-activity-name').value;
+            if (id && confirm(`⚠️ Permanently delete Activity "${name}"?`)) {
+                window.location.href = `/manage/inventory/activity/delete/${id}/`;
+            }
+        });
+    }
+
+    document.querySelectorAll('.close-btn, .btn-cancel, #close-edit-category-btn, #close-edit-activity-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.side-panel').forEach(p => p.classList.remove('open'));
         });

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Sum, F
 from inventory.models import ListingVariant, StockLedger, Category
@@ -15,7 +15,7 @@ def login(request):
             user = form.get_user()
             
             if user.is_staff:
-                login(request, user)
+                auth_login(request, user) 
                 return redirect('dashboard')
             else:
                 form.add_error(None, "Access denied. This portal is for authorized staff only.")
@@ -32,7 +32,7 @@ def dashboard(request):
     ).aggregate(total=Sum('value'))['total'] or 0
 
     total_stock = ListingVariant.objects.aggregate(Sum('current_stock_quantity'))['current_stock_quantity__sum'] or 0
-    low_stock_items = ListingVariant.objects.filter(current_stock_quantity__lte=5, current_stock_quantity__gt=0)
+    low_stock_items = ListingVariant.objects.select_related('listing').filter(current_stock_quantity__lte=5, current_stock_quantity__gt=0)
     out_of_stock_count = ListingVariant.objects.filter(current_stock_quantity=0).count()
     
     last_30_days = timezone.now() - timedelta(days=30)

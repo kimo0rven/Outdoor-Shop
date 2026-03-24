@@ -1,6 +1,32 @@
-<h2>Staff Login</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+
+    <title>Staff Login | Aginod Outdoor Shop</title>
+    <style></style>
+  </head>
+  <div class="login-container">
+    <div class="login-wrapper">
+      <div class="login-header">
+        <h2 class="login-header-title">Aginod Portal</h2>
+        <p>Authorized Staff Access</p>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="errorlist">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="POST" class="login-form">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="login-btn">Secure Login</button>
+      </form>
+    </div>
+  </div>
+</html>

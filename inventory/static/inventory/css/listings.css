@@ -7,7 +7,7 @@
     overflow: hidden; 
 }
 
-/* --- Header & Actions --- */
+
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -44,7 +44,7 @@
     color: #4a5568;
 }
 
-/* --- Table Styles --- */
+
 .table-responsive {
     width: 100%;
     overflow-x: auto;
@@ -75,7 +75,7 @@
 .inventory-table tbody tr:nth-child(even) { background-color: #f4f6f8; }
 .inventory-table tbody tr:hover { background-color: #eef1f5; }
 
-/* --- Table Typography --- */
+
 .serial-text, .sub-text { color: #5c6873; }
 .name-text { color: #353d47; }
 
@@ -100,7 +100,7 @@
 
 .no-result { text-align: center; padding: 20px; color: #a0aec0; }
 
-/* --- Status Badges --- */
+
 .status-badge {
     display: inline-block;
     padding: 3px 10px;
@@ -112,7 +112,7 @@
     min-width: 75px;
 }
 
-/* Status Colors */
+
 .status-active { background-color: #2ab6d4; }    /* Cyan/Blue */
 .status-draft { background-color: #f39c12; }     /* Orange */
 .status-inactive { background-color: #e74c3c; }  /* Red */
@@ -129,7 +129,7 @@
 .status-adjustment { background-color: #2ab6d4; } /* Blue */
 .status-return { background-color: #805ad5; }     /* Purple */
 
-/* --- Sliding Side Panel --- */
+
 .side-panel {
     position: fixed;
     top: 0;
@@ -159,7 +159,7 @@
 .header-left h4 { margin: 0; font-size: 1.1rem; color: #4a5568; font-weight: 500; }
 .header-right { display: flex; gap: 10px; }
 
-/* --- Buttons --- */
+
 .btn { 
     padding: 8px 16px; 
     border-radius: 4px; 
@@ -199,7 +199,7 @@
     transform: translateY(1px);
 }
 
-/* --- Forms --- */
+
 .panel-body { padding: 25px 20px; overflow-y: auto; flex: 1; }
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; font-size: 0.9rem; color: #4a5568; margin-bottom: 8px; font-weight: 500; }

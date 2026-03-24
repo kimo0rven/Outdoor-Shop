@@ -14,5 +14,8 @@ urlpatterns = [
     path('category/', views.display_category, name='category'),
     path('category/edit/', views.edit_category, name='edit_category'),
     path('category/delete/<int:pk>/', views.delete_category, name='delete_category'),
+    path('activity/', views.display_activity, name='activity'),
+    path('activity/edit/', views.edit_activity, name='edit_activity'),
+    path('activity/delete/<int:pk>/', views.delete_activity, name='delete_activity'),
     path('ledger/', views.stock_ledger_list, name='ledger'),
 ]

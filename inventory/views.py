@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import ListingVariant, Listing, Category, ProductAttribute, StockLedger
+from .models import ListingVariant, Listing, ListingImage, Category, ProductAttribute, StockLedger, Activity, ListingGalleryImage
 
 @login_required(login_url='login')
 def inventory_units(request):
@@ -14,6 +14,9 @@ def inventory_units(request):
         status = request.POST.get('status', 'in_stock')
         
         parent_listing = Listing.objects.get(id=listing_id)
+        
+        variant_images = request.FILES.getlist('variant_images')
+        first_image = variant_images[0] if variant_images else None
 
         variant = ListingVariant.objects.create(
             listing=parent_listing,
@@ -21,24 +24,15 @@ def inventory_units(request):
             variant_name=variant_name,
             price=price,
             current_stock_quantity=quantity,
-            status=status
+            status=status,
+            thumbnail=first_image
         )
-
-        variant_image = request.FILES.getlist('variant_image')
         
-        for img in variant_image:
-            from .models import ListingImage
+        for img in variant_images:
             ListingImage.objects.create(
                 listing_variant=variant,
-                image_filel=img
+                image_file=img
             )
-        
-        # if variant_image:
-        #     from .models import ListingImage
-        #     ListingImage.objects.create(
-        #         listing_variant=variant,
-        #         image_file=variant_image
-        #     )
 
         names = request.POST.getlist('attr_name[]')
         values = request.POST.getlist('attr_val[]')
@@ -46,7 +40,7 @@ def inventory_units(request):
             if name.strip() and value.strip():
                 ProductAttribute.objects.create(variant=variant, name=name, value=value)
         
-        messages.success(request, f"Variant {sku} created with image!")
+        messages.success(request, f"Variant {sku} created successfully!")
         return redirect('units')
 
     variants = ListingVariant.objects.select_related('listing__category').prefetch_related('attributes', 'images').all()
@@ -139,8 +133,12 @@ def create_listing(request):
 @login_required(login_url='login')
 def inventory_listings(request):
     if request.method == 'POST':
+        uploaded_images = request.FILES.getlist('thumbnail')
+        main_thumbnail = uploaded_images[0] if uploaded_images else None
+        
         listing_name = request.POST.get('listing_name')
         category_id = request.POST.get('category_id')
+        activity_id = request.POST.get('activity_id')
         description = request.POST.get('description')
         brand = request.POST.get('brand')
         tags = request.POST.get('tags')
@@ -153,11 +151,15 @@ def inventory_listings(request):
         
         if listing_name and category_id:
             category = Category.objects.get(id=category_id)
-            Listing.objects.create(
+            activity = None
+            if activity_id:
+                activity = Activity.objects.get(id=activity_id)
+            listing = Listing.objects.create(
                 category=category,
+                activity=activity,
                 name=listing_name,
                 brand=brand,
-                thumbnail=thumbnail,
+                thumbnail=main_thumbnail,
                 tags=tags,
                 vendor=vendor,
                 model_number=model_number,
@@ -165,14 +167,21 @@ def inventory_listings(request):
                 description=description,
                 listing_status=status,
             )
+            
+        for img in uploaded_images:
+                ListingGalleryImage.objects.create(
+                    listing=listing, 
+                    image_file=img
+                )
         return redirect('listings')
 
     listings = Listing.objects.select_related('category').order_by('-date_created')
     categories = Category.objects.all()
-    
+    activities = Activity.objects.all()
     context = {
         'listings': listings,
-        'categories': categories
+        'categories': categories,
+        'activities': activities
     }
     return render(request, 'inventory/products.html', context)
 
@@ -190,7 +199,15 @@ def edit_listing(request):
         listing.description = request.POST.get('description')
         listing.listing_status = request.POST.get('listing_status')
         category_id = request.POST.get('category_id')
+        activity_id = request.POST.get('activity_id')
         listing.category = Category.objects.get(id=category_id)
+        
+        if activity_id:
+            listing.activity = Activity.objects.get(id=activity_id)
+        else:
+            listing.activity = None
+        
+        listing.activity = Activity.objects.get(id=activity_id)
         
         price = request.POST.get('base_price')
         listing.base_price = price if price else None
@@ -253,7 +270,47 @@ def delete_category(request, pk):
     return redirect('category')
 
 @login_required(login_url='login')
+def display_activity(request):
+    if request.method == 'POST':
+        new_activity_name = request.POST.get('activity_name')
+        if new_activity_name:
+            Activity.objects.create(activity_name=new_activity_name)
+        return redirect('activity')
+
+    activities = Activity.objects.all().order_by('-date_created')
+    
+    context = {
+        'activities': activities
+    }
+    
+    return render(request, 'inventory/activity.html', context)
+
+@login_required(login_url='login')
+def edit_activity(request):
+    if request.method == 'POST':
+        activity_id = request.POST.get('activity_id')
+        activity = get_object_or_404(Activity, id=activity_id)
+        
+        activity.activity_name = request.POST.get('activity_name')
+        activity.save()
+        
+        messages.success(request, f"Activity '{activity.activity_name}' updated!")
+        return redirect('activity')
+    
+@login_required(login_url='login')
+def delete_activity(request, pk):
+    activity = get_object_or_404(Activity, pk=pk)
+    name = activity.activity_name
+    
+    if activity.listings.exists():
+        messages.error(request, f"Cannot delete '{name}' because it contains products!")
+    else:
+        activity.delete()
+        messages.warning(request, f"Activity '{name}' deleted.")
+        
+    return redirect('activity')
+
+@login_required(login_url='login')
 def stock_ledger_list(request):
-    """Simple view to see all physical movements"""
     entries = StockLedger.objects.all().select_related('variant__listing', 'staff')
     return render(request, 'inventory/ledger.html', {'ledger_entries': entries})

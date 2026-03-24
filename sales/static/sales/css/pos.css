@@ -45,7 +45,7 @@
 }
 
 .category-tabs {
-	display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px
+	display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; flex-wrap: wrap;
 }
 
 .quick-items-grid {
