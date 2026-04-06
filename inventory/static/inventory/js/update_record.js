@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (saveEditBtn && editListingForm) {
         saveEditBtn.addEventListener('click', function() {
-            console.log("Listing update button clicked");
             if (editListingForm.checkValidity()) {
                 saveEditBtn.disabled = true;
                 saveEditBtn.innerText = "Updating...";
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (saveEditVariantBtn && editVariantForm) {
         saveEditVariantBtn.addEventListener('click', function() {
-            console.log("Variant update button clicked");
             if (editVariantForm.checkValidity()) {
                 saveEditVariantBtn.disabled = true;
                 saveEditVariantBtn.innerText = "Updating...";

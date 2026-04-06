@@ -45,7 +45,12 @@ def inventory_units(request):
         messages.success(request, f"Variant {sku} created successfully!")
         return redirect('units')
 
-    variants = ListingVariant.objects.select_related('listing__category').prefetch_related('attributes', 'images').all()
+    variants = (
+        ListingVariant.objects
+        .select_related('listing__category')
+        .prefetch_related('attributes', 'images')
+        .order_by('-date_created', '-id')
+    )
     listings = Listing.objects.all()
     return render(request, 'inventory/units.html', {'variants': variants, 'listings': listings})
 

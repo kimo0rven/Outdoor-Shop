@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (saveListingBtn && createListingForm) {
         saveListingBtn.addEventListener('click', () => {
-            console.log("New Listing save clicked");
             createListingForm.submit();
         });
     }
@@ -47,19 +46,4 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('edit-variant-panel').classList.remove('open');
         });
     }
-
-
-    const messageContainer = document.querySelector('.messages-container');
-    
-    if (messageContainer) {
-        setTimeout(() => {
-            messageContainer.style.transition = "opacity 0.5s ease";
-            messageContainer.style.opacity = "0";
-            setTimeout(() => {
-                messageContainer.remove();
-            }, 500); 
-        }, 3000);
-    }
-
-
 });

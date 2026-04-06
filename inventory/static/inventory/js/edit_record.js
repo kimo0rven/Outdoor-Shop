@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 const imageUrl = this.getAttribute('data-image');
                 const imageDisplay = document.getElementById('current-listing-image-display');
-                console.log(imageDisplay)
 
                 if (imageDisplay) {
                     if (imageUrl && imageUrl !== "") {

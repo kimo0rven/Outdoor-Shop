@@ -244,46 +244,104 @@
 }
 
 .sidebar-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5); z-index: 1000;
-  opacity: 0; visibility: hidden; transition: 0.3s ease;
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; 
+  height: 100%;
+  background: rgba(0,0,0,0.5); 
+  z-index: 1000;
+  opacity: 0; visibility: hidden; 
+  transition: 0.3s ease;
 }
 .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
 
 .address-sidebar {
-  position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
-  background: #fff; z-index: 1001; box-shadow: -4px 0 15px rgba(0,0,0,0.1);
-  padding: 30px; transition: right 0.3s ease; overflow-y: auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: fixed; 
+  top: 0; 
+  right: -450px; 
+  width: 450px; 
+  height: 100%;
+  background: #fff; 
+  z-index: 1001; 
+  box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+  padding: 30px; 
+  transition: right 0.3s ease; 
+  overflow-y: auto;
 }
 .address-sidebar.active { right: 0; }
 
 .sidebar-header {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 25px;
 }
-.sidebar-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
-.close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #333; }
+.sidebar-header h2 { 
+  font-size: 20px; 
+  font-weight: 600; 
+  margin: 0; 
+}
+.close-btn { 
+  background: none; 
+  border: none; 
+  font-size: 28px; 
+  cursor: pointer; 
+  color: #333; 
+}
 
 
 .btn-outline {
-  width: 100%; background: #fff; border: 1px solid #ccc; padding: 12px;
-  border-radius: 40px; font-weight: 600; font-size: 14px; cursor: pointer;
+  width: 100%; 
+  background: #fff; 
+  border: 1px solid #ccc; 
+  padding: 12px;
+  border-radius: 40px; 
+  font-weight: 600; 
+  font-size: 14px; 
+  cursor: pointer;
   transition: 0.2s;
 }
 .btn-outline:hover { border-color: #111; }
 
 
 .address-card {
-  display: flex; gap: 15px; border: 1px solid #ccc; padding: 20px;
-  border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: 0.2s;
+  display: flex; 
+  gap: 15px; 
+  border: 1px solid #ccc; 
+  padding: 20px;
+  border-radius: 8px; 
+  margin-bottom: 15px; 
+  cursor: pointer; 
+  transition: 0.2s;
 }
-.address-card.selected { border-color: #111; border-width: 1px; }
-.address-card input[type="radio"] { margin-top: 3px; accent-color: #111; transform: scale(1.1); }
+.address-card.selected { 
+  border-color: #111; 
+  border-width: 1px; }
+.address-card input[type="radio"] { 
+  margin-top: 3px; 
+  accent-color: #111; 
+  transform: scale(1.1); }
 
-.address-details { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #333; }
-.address-details strong { font-size: 14px; color: #111; margin-bottom: 2px; }
-.edit-address-link { color: #111; text-decoration: underline; margin-top: 8px; font-size: 13px; font-weight: 500; }
+.address-details { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+  font-size: 13px; 
+  color: #333; 
+}
+.address-details strong { 
+  font-size: 14px; 
+  color: #111; 
+  margin-bottom: 2px; 
+}
+.edit-address-link { 
+  color: #111; 
+  text-decoration: underline; 
+  margin-top: 8px; 
+  font-size: 13px; 
+  font-weight: 500; 
+}
 
 @media (max-width: 768px) {
   .checkout-container {

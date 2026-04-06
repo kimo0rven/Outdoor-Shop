@@ -92,14 +92,32 @@
     font-size: 0.9rem;
     text-align: center;
 }
-.search-container { position: relative; display: flex; align-items: center; }
+.search-container { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+}
 
-.search-icon { position: absolute; left: 10px; color: #6c757d; }
+.search-icon { 
+    position: absolute; 
+    left: 10px; 
+    color: #6c757d; 
+}
 
-.search-input { padding: 6px 10px 6px 30px; border-radius: 20px; border: 1px solid #ced4da; font-size: 0.85rem; width: 150px; outline: none; }
+.search-input { 
+    padding: 6px 10px 6px 30px; 
+    border-radius: 20px; 
+    border: 1px solid #ced4da; 
+    font-size: 0.85rem; 
+    width: 150px; 
+    outline: none; 
+}
 
-.no-result { text-align: center; padding: 20px; color: #a0aec0; }
-
+.no-result { 
+    text-align: center; 
+    padding: 20px; 
+    color: #a0aec0; 
+}
 
 .status-badge {
     display: inline-block;
@@ -174,18 +192,40 @@
     padding: 6px 12px; font-size: 0.85rem;
 }
 
-.btn-cancel { background-color: #ffffff; border-color: #2ab6d4; color: #2ab6d4; }
+.btn-cancel { 
+    background-color: #ffffff; 
+    border-color: #2ab6d4; 
+    color: #2ab6d4; 
+}
 .btn-cancel:hover { background-color: #f0fbfd; }
 
 .btn-delete { 
-    background-color: #ffffff; border-color: #e53e3e; color: #e53e3e; }
-.btn-delete:hover { background-color: #fff5f5; border-color: #b32727; color: #c53030; }
+    background-color: #ffffff; 
+    border-color: #e53e3e; 
+    color: #e53e3e; 
+}
 
-.btn-save { background-color: #2ab6d4; color: #ffffff; }
+.btn-delete:hover { 
+    background-color: #fff5f5; 
+    border-color: #b32727; 
+    color: #c53030; 
+}
+
+.btn-save { 
+    background-color: #2ab6d4; 
+    color: #ffffff; 
+}
 .btn-save:hover { background-color: #24a1bd; }
 
 .btn-add-attr {
-    margin-top: 10px; width: 100%; padding: 8px; border: 1px solid #2ab6d4; background: white; color: #2ab6d4; cursor: pointer; border-radius: 4px;
+    margin-top: 10px; 
+    width: 100%; 
+    padding: 8px; 
+    border: 1px solid #2ab6d4; 
+    background: white; 
+    color: #2ab6d4; 
+    cursor: pointer; 
+    border-radius: 4px;
 }
 
 .btn-add-attr:hover {
@@ -199,12 +239,31 @@
     transform: translateY(1px);
 }
 
-
-.panel-body { padding: 25px 20px; overflow-y: auto; flex: 1; }
+.panel-body { 
+    padding: 25px 20px; 
+    overflow-y: auto; 
+    flex: 1; 
+}
 .form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-size: 0.9rem; color: #4a5568; margin-bottom: 8px; font-weight: 500; }
-.form-group-attr { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e0; }
-.form-group-attr-label { margin-bottom: 10px; display: block; font-weight: 600; }
+.form-group label { 
+    display: block; 
+    font-size: 0.9rem; 
+    color: #4a5568; 
+    margin-bottom: 8px; 
+    font-weight: 500; 
+}
+.form-group-attr { 
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px; 
+    border: 1px dashed #cbd5e0; 
+}
+.form-group-attr-label { 
+    margin-bottom: 10px; 
+    display: block; 
+    font-weight: 600; 
+
+}
 .required { color: #e74c3c; }
 
 .flex-row { display: flex; gap: 15px; }
@@ -228,13 +287,36 @@
 
 textarea.form-control { resize: vertical; }
 
-.listing-thumbnail { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; }
-.listing-no-thumbnail { width: 40px; height: 40px; background: #e9ecef; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #adb5bd; }
+.listing-thumbnail { 
+    width: 40px; 
+    height: 40px; 
+    object-fit: cover; 
+    border-radius: 4px; 
+}
 
-.listing-brand { color: #6c757d; font-size: 0.85rem; }
+.listing-no-thumbnail { 
+    width: 40px; 
+    height: 40px; 
+    background: #e9ecef; 
+    border-radius: 4px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: #adb5bd; 
+}
+
+.listing-brand { 
+    color: #6c757d; 
+    font-size: 0.85rem; 
+}
 
 
-.attr-container { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px; }
+.attr-container { 
+    margin-top: 5px; 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 4px; 
+}
 
 .attr-tag {
     font-size: 0.75rem;
@@ -264,7 +346,9 @@ textarea.form-control { resize: vertical; }
 }
 
 .small-text {
-    font-size: 0.75rem; color: #718096; margin-top: 5px;
+    font-size: 0.75rem; 
+    color: #718096; 
+    margin-top: 5px;
 }
 
 .gallery-edit-grid {

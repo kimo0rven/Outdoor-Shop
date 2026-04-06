@@ -15,7 +15,7 @@ from sales.order_services import create_order_items_and_ledger, line_items_from_
 from accounts.models import ShippingAddress
 from .models import PopularSearchTerm
 from .cart import Cart
-from .forms import CheckoutForm, ShippingAddressForm
+from .forms import ShippingAddressForm
 from django.http import JsonResponse
 from django.conf import settings
 

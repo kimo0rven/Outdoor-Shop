@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
-
 class CustomerSignUpForm(UserCreationForm):
     email = forms.EmailField(label='Email address')
     first_name = forms.CharField(max_length=150, label='First name')

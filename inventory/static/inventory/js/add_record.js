@@ -3,15 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	const createVariantForm = document.getElementById("create-variant-form");
 	const addAttrBtn = document.getElementById("add-attribute-row");
 	const attrContainer = document.getElementById("attributes-container");
-	const addImageInput = document.getElementById("add-variant-image");
-
-	if (addImageInput) {
-		addImageInput.addEventListener("change", function () {
-			if (this.files && this.files[0]) {
-				console.log("File selected:", this.files[0].name);
-			}
-		});
-	}
 
 	if (addAttrBtn) {
 		addAttrBtn.addEventListener("click", function () {

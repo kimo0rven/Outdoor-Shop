@@ -3,24 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const tableBody = document.querySelector('.inventory-table tbody');
     const rows = tableBody.querySelectorAll('tr');
 
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function() {
-            const query = searchInput.value.toLowerCase();
-
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                
-                if (text.includes(query)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-
-            const visibleRows = Array.from(rows).filter(r => r.style.display !== "none");
-        });
-    }
+    if (!searchInput || !tableBody) return;
 
     searchInput.addEventListener('keyup', function() {
         const filter = searchInput.value.toLowerCase();
@@ -30,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (rows[i].cells.length < 2) continue;
 
             const textContent = rows[i].textContent.toLowerCase();
-            
+
             if (textContent.includes(filter)) {
                 rows[i].style.display = "";
                 resultsFound = true;

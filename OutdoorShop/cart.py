@@ -1,5 +1,4 @@
 from decimal import Decimal
-from django.conf import settings
 from inventory.models import Listing, ListingVariant
 
 class Cart():

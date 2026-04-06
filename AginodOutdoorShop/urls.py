@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include, reverse_lazy
 from OutdoorShop import views as shop_views
-from inventory import views as inventory_views
 from AginodOutdoorShop import views as global_views
-from accounts import views as accounts_views
 from django.conf import settings
 from django.conf.urls.static import static
 

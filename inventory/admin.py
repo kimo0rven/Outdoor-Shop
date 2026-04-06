@@ -19,10 +19,6 @@ from .models import (
     StockLedger,
 )
 
-
-# --- Inlines -----------------------------------------------------------------
-
-
 class ListingVariantInline(admin.TabularInline):
     model = ListingVariant
     extra = 0
@@ -93,9 +89,6 @@ class ShippingAddressInline(admin.TabularInline):
         'is_default',
     )
     readonly_fields = fields
-
-
-# --- Inventory catalog -------------------------------------------------------
 
 
 @admin.register(Category)
@@ -398,11 +391,7 @@ class StockLedgerAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
     def has_change_permission(self, request, obj=None):
-        # Allow opening the read-only change view for audit detail.
         return True
-
-
-# --- Accounts & sales (registered here for a single staff admin hub) --------
 
 
 @admin.register(User)

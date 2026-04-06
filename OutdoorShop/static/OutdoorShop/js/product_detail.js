@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (available) {
         availabilityWarning.style.display = 'none';
       } else {
-        showWarning('This combination is currently unavailable or out of stock.');
+        showWarning('Currently unavailable or out of stock.');
       }
     }
 
