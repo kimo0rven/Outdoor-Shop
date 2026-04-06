@@ -1,0 +1,103 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/cart.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <main class="cart-container">
+    <h1 class="cart-header">Your Shopping Cart</h1>
+
+    {% if cart|length > 0 %}
+      <div class="cart-layout">
+        <div class="cart-items">
+          {% for item in cart %}
+            <div class="cart-item">
+              <div class="cart-item-image">
+                {% if item.variant and item.variant.thumbnail %}
+                  <img src="{{ item.variant.thumbnail.url }}" alt="{{ item.product.name }}" />
+                {% elif item.product.thumbnail %}
+                  <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.name }}" />
+                {% else %}
+                  <span>No Image</span>
+                {% endif %}
+              </div>
+
+              <div class="cart-item-details">
+                <h3><a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a></h3>
+
+                {% if item.variant %}
+                  <div class="item-attributes">
+                    {% for attr in item.variant.attributes.all %}
+                      <span class="attr-badge"><strong>{{ attr.name }}:</strong> {{ attr.value }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <p class="base-price">₱{{ item.price|intcomma }}</p>
+              </div>
+
+              <div class="cart-item-actions">
+                <form action="{% url 'cart_update' %}" method="POST" class="qty-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ item.product.id }}" />
+                  {% if item.variant %}
+                    <input type="hidden" name="variant_id" value="{{ item.variant.id }}" />
+                  {% endif %}
+
+                  <div class="qty-control">
+                    <button type="button" class="qty-btn minus" onclick="this.nextElementSibling.stepDown(); this.form.submit();">-</button>
+                    <input type="number" name="quantity" class="qty-input" value="{{ item.quantity }}" min="1" onchange="this.form.submit();" />
+                    <button type="button" class="qty-btn plus" onclick="this.previousElementSibling.stepUp(); this.form.submit();">+</button>
+                  </div>
+                </form>
+
+                <p class="item-total">₱{{ item.total_price|intcomma }}</p>
+
+                <form action="{% url 'cart_remove' %}" method="POST" class="remove-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ item.product.id }}" />
+                  {% if item.variant %}
+                    <input type="hidden" name="variant_id" value="{{ item.variant.id }}" />
+                  {% endif %}
+                  <button type="submit" class="remove-btn" title="Remove item"><i class="material-icons">&#xe872;</i></button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+          <h3>Order Summary</h3>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₱{{ cart.get_total_price|intcomma }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span>Calculated at checkout</span>
+          </div>
+
+          <hr class="summary-divider" />
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span>₱{{ cart.get_total_price|intcomma }}</span>
+          </div>
+
+          <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+      </div>
+    {% else %}
+      <div class="empty-cart">
+        <i class="material-icons">&#xe8cc;</i>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="{% url 'all_products' %}" class="shop-btn">Start Shopping</a>
+      </div>
+    {% endif %}
+  </main>
+{% endblock %}

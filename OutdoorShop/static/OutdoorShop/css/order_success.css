@@ -1,0 +1,78 @@
+.success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 40px 20px;
+}
+
+.success-card {
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 50px 40px;
+}
+
+.success-icon-wrapper {
+  margin-bottom: 20px;
+}
+
+.success-icon {
+  font-size: 72px;
+  color: #28a745;
+}
+
+.success-title {
+  font-size: 32px;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+.success-message {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+.success-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-primary {
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #1a1a1a;
+}
+
+.btn-primary:hover {
+  background: #333;
+  border-color: #333;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+.btn-outline:hover {
+  background: #1a1a1a;
+  color: #fff;
+}

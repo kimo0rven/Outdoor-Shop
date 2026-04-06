@@ -1,233 +1,410 @@
 let cart = [];
+let currentProductImage = 'none';
+let posVariantPickById = {};
 
-document.addEventListener("DOMContentLoaded", function () {
-	const searchInput = document.getElementById("pos-search-input");
-	const resultsContainer = document.getElementById("search-results-container");
-	const cartList = document.getElementById("cart-list");
-	const totalEl = document.getElementById("cart-total");
-	const checkoutBtn = document.getElementById("checkout-btn");
-	const paymentModal = document.getElementById("payment-modal");
-	const amountTenderedInput = document.getElementById("amount-tendered");
-	const changeDisplay = document.getElementById("change-display");
-	const confirmBtn = document.getElementById("confirm-checkout");
-	const variantModal = document.getElementById("variant-modal");
+const posData = document.getElementById('pos-data');
+const checkoutUrl = posData.dataset.checkoutUrl;
+const templateVariantUrl = posData.dataset.variantsUrl;
+const searchUrl = posData.dataset.searchUrl;
+const csrfToken = document.getElementById('csrf-token').value;
 
-	const posData = document.getElementById("pos-data");
-	const checkoutUrl = posData ? posData.dataset.checkoutUrl : "/pos/checkout/";
+function escapeHtml(text) {
+    if (text == null || text === '') return '';
+    const el = document.createElement('div');
+    el.textContent = text;
+    return el.innerHTML;
+}
 
-	// Search Logic
-	searchInput.addEventListener("input", async (e) => {
-		const q = e.target.value.trim();
-		if (q.length < 2) {
-			resultsContainer.style.display = "none";
-			return;
-		}
-		try {
-			const response = await fetch(`/pos/search/?q=${q}`);
-			const data = await response.json();
+function buildVariantAttributesHtml(v) {
+    if (v.attribute_list && v.attribute_list.length) {
+        const pills = v.attribute_list
+            .map((a) => `<span class="v-attr-pill">${escapeHtml(`${a.name}: ${a.value}`)}</span>`)
+            .join('');
+        return `<div class="v-attributes">${pills}</div>`;
+    }
+    if (v.attributes) {
+        return `<div class="v-attributes v-attributes-plain">${escapeHtml(v.attributes)}</div>`;
+    }
+    return '';
+}
 
-			resultsContainer.innerHTML = "";
-			if (data.results && data.results.length > 0) {
-				data.results.forEach((item) => {
-					const div = document.createElement("div");
-					div.className = "result-item";
-					div.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 12px; padding: 5px; cursor: pointer;">
-                            <img src="${item.image || ""}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #edf2f7;">
-                            <div style="flex-grow: 1;">
-                                <div style="font-weight: bold; font-size: 0.9rem;">${item.name}</div>
-                                <small style="color: #718096;">SKU: ${item.sku} | Stock: ${item.stock}</small>
-                            </div>
-                            <div style="font-weight: bold; color: #2ab6d4;">₱${parseFloat(item.price).toFixed(2)}</div>
-                        </div>
-                    `;
-					div.onclick = () => addToCart(item);
-					resultsContainer.appendChild(div);
-				});
-				resultsContainer.style.display = "block";
-			} else {
-				resultsContainer.style.display = "none";
-			}
-		} catch (err) {
-			console.error("Search Error:", err);
-		}
-	});
+function buildCartItemAttributesHtml(item) {
+    if (item.attribute_list && item.attribute_list.length) {
+        const pills = item.attribute_list
+            .map((a) => `<span class="v-attr-pill">${escapeHtml(`${a.name}: ${a.value}`)}</span>`)
+            .join('');
+        return `<div class="v-attributes cart-item-attributes">${pills}</div>`;
+    }
+    if (item.attributes) {
+        return `<div class="v-attributes v-attributes-plain cart-item-attributes">${escapeHtml(item.attributes)}</div>`;
+    }
+    return '';
+}
 
-	// Close search results when clicking outside
-	document.addEventListener("click", (e) => {
-		if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-			resultsContainer.style.display = "none";
-		}
-	});
+function addToCart(id, listingName, variantName, price, stock, image, attributeList, attributesString) {
+    if (stock <= 0) {
+        alert("This item is out of stock!");
+        return;
+    }
 
-	// Variant Modal Logic
-	window.openVariantModal = function (listingId, listingName) {
-		document.getElementById("variant-modal-title").innerText = listingName + " - Select Variant";
-		const variantsHtml = document.getElementById("variants-" + listingId).innerHTML;
-		const modalBody = document.getElementById("variant-modal-body");
+    const attrs = Array.isArray(attributeList) ? attributeList : [];
+    const attrStr = attributesString || '';
 
-		if (variantsHtml.trim() === "") {
-			modalBody.innerHTML =
-				'<p style="text-align: center; color: #a0aec0; padding: 20px;">No available variants for this item.</p>';
-		} else {
-			modalBody.innerHTML = variantsHtml;
-		}
+    let existingItem = cart.find(item => item.id === id);
 
-		variantModal.style.display = "flex";
-	};
+    if (existingItem) {
+        if (existingItem.qty < stock) {
+            existingItem.qty += 1;
+        } else {
+            alert("Cannot add more than available stock.");
+        }
+    } else {
+        cart.push({
+            id: id,
+            listingName: listingName,
+            variantName: variantName,
+            price: price,
+            qty: 1,
+            maxStock: stock,
+            image: image,
+            attribute_list: attrs,
+            attributes: attrStr,
+        });
+    }
 
-	window.closeVariantModal = function () {
-		if (variantModal) variantModal.style.display = "none";
-	};
+    updateCartUI();
+}
 
-	// Close variant modal if clicked outside
-	if (variantModal) {
-		variantModal.addEventListener("click", function (e) {
-			if (e.target === this) {
-				closeVariantModal();
-			}
-		});
-	}
+function updateCartUI() {
+    const cartList = document.getElementById('cart-list');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    
+    const subTotalNode = document.getElementById('summary-subtotal');
+    const totalNode = document.getElementById('cart-total');
+    
+    if (cart.length === 0) {
+        cartList.innerHTML = `
+            <div id="empty-msg" class="cart-list-empty-msg">
+              <div style="font-size: 30px; margin-bottom: 10px;">🛒</div>
+              Cart is empty. Tap items to add.
+            </div>`;
+        
+        if (subTotalNode) subTotalNode.innerText = "₱0.00";
+        if (totalNode) totalNode.innerText = "₱0.00";
+        checkoutBtn.disabled = true;
+        return;
+    }
 
-	// Cart Logic
-	window.addToCart = function (item) {
-		const existing = cart.find((i) => i.id === item.id);
-		if (existing) {
-			if (existing.qty < item.stock) {
-				existing.qty += 1;
-			} else {
-				alert("Limit reached based on current stock.");
-			}
-		} else {
-			cart.push({ ...item, qty: 1 });
-		}
-		searchInput.value = "";
-		resultsContainer.style.display = "none";
-		renderCart();
-	};
+    cartList.innerHTML = ""; 
+    let subTotal = 0;
 
-	window.renderCart = function () {
-		if (!cartList || !totalEl) return;
+    cart.forEach((item, index) => {
+        let itemTotal = item.price * item.qty;
+        subTotal += itemTotal;
 
-		cartList.innerHTML = "";
-		let total = 0;
+        let imgSrc = (item.image && item.image !== 'none') ? `<img src="${item.image}" alt="img">` : `<span style="font-size:24px">📦</span>`;
+        
+        let displayQty = item.qty < 10 ? `0${item.qty}` : item.qty;
 
-		if (cart.length === 0) {
-			cartList.innerHTML =
-				'<p id="empty-msg" style="color: #a0aec0; text-align: center; margin-top: 50px;">Cart is empty</p>';
-			totalEl.innerText = "₱0.00";
-			checkoutBtn.disabled = true;
-			return;
-		}
+        const cartAttrsHtml = buildCartItemAttributesHtml(item);
 
-		cart.forEach((item, index) => {
-			const itemTotal = item.price * item.qty;
-			total += itemTotal;
-			const div = document.createElement("div");
-			div.className = "cart-item";
-			div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #f7fafc;">
-                    <img src="${item.image || ""}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
-                    <div style="flex-grow: 1;">
-                        <div style="font-weight: bold; font-size: 0.85rem;">${item.name}</div>
-                        <small>₱${parseFloat(item.price).toFixed(2)} x ${item.qty}</small>
-                    </div>
-                    <button onclick="removeFromCart(${index})" style="background:none; border:none; color:red; cursor:pointer; font-size:1.2rem;">✕</button>
+        cartList.innerHTML += `
+            <div class="cart-item-card">
+                <div class="cart-item-img-box">
+                    ${imgSrc}
                 </div>
-            `;
-			cartList.appendChild(div);
-		});
-		totalEl.innerText = `₱${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-		checkoutBtn.disabled = false;
-	};
+                
+                <div class="cart-item-details">
+                    <div class="cart-item-title">${escapeHtml(item.listingName)}</div>
+            
+                    ${cartAttrsHtml}
 
-	window.removeFromCart = function (index) {
-		cart.splice(index, 1);
-		renderCart();
-	};
+                    <div class="cart-item-bottom">
+                        <div class="qty-controls">
+                            <button class="btn-qty-minus" onclick="changeQty(${index}, -1)">−</button>
+                            <span class="qty-val">${displayQty}</span>
+                            <button class="btn-qty-plus" onclick="changeQty(${index}, 1)">+</button>
+                        </div>
+                        <div class="cart-item-price-wrap">
+                            Total <span class="cart-item-price">₱${itemTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                        </div>
+                    </div>
+                </div>
 
-	// Category Filtering
-	window.filterCategory = function (slug) {
-		document.querySelectorAll(".cat-tab").forEach((tab) => {
-			tab.classList.remove("active");
-			if (tab.getAttribute("onclick").includes(`'${slug}'`)) {
-				tab.classList.add("active");
-			}
-		});
-		const items = document.querySelectorAll(".quick-item-card");
-		items.forEach((item) => {
-			if (slug === "all" || item.classList.contains(slug)) {
-				item.style.display = "flex";
-			} else {
-				item.style.display = "none";
-			}
-		});
-	};
+                <button class="btn-delete-item" onclick="removeItem(${index})">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+            </div>
+        `;
+    });
 
-	// Checkout Modal Logic
-	checkoutBtn.addEventListener("click", () => {
-		if (cart.length === 0) return;
-		const totalText = totalEl.innerText;
-		document.getElementById("modal-total-due").innerText = totalText;
-		paymentModal.style.display = "flex";
-		amountTenderedInput.value = "";
-		changeDisplay.style.display = "none";
-		confirmBtn.disabled = true;
-		confirmBtn.style.opacity = "0.5";
-		setTimeout(() => amountTenderedInput.focus(), 100);
-	});
+    let taxRate = 0.00;
+    let taxAmount = subTotal * taxRate;
+    let grandTotal = subTotal + taxAmount;
 
-	amountTenderedInput.addEventListener("input", () => {
-		const total = parseFloat(document.getElementById("modal-total-due").innerText.replace(/[₱,]/g, ""));
-		const tendered = parseFloat(amountTenderedInput.value) || 0;
-		if (tendered >= total) {
-			const change = tendered - total;
-			document.getElementById("modal-change-amount").innerText =
-				`₱${change.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-			changeDisplay.style.display = "block";
-			confirmBtn.disabled = false;
-			confirmBtn.style.opacity = "1";
-		} else {
-			changeDisplay.style.display = "none";
-			confirmBtn.disabled = true;
-			confirmBtn.style.opacity = "0.5";
-		}
-	});
+    if (subTotalNode) subTotalNode.innerText = `₱${subTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+    if (totalNode) totalNode.innerText = `₱${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+    
+    checkoutBtn.disabled = false;
+}
 
-	confirmBtn.addEventListener("click", async () => {
-		const total = parseFloat(document.getElementById("modal-total-due").innerText.replace(/[₱,]/g, ""));
-		const checkoutData = {
-			cart: cart,
-			total: total,
-			payment_method: "Cash",
-			source: "POS",
-		};
-		try {
-			const response = await fetch(checkoutUrl, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-				},
-				body: JSON.stringify(checkoutData),
-			});
-			const result = await response.json();
-			if (result.success) {
-				alert("Transaction Successful! Order #" + result.order_id);
-				cart = [];
-				renderCart();
-				paymentModal.style.display = "none";
-				window.location.reload();
-			} else {
-				alert("Error: " + result.message);
-			}
-		} catch (error) {
-			console.error("Checkout Error:", error);
-			alert("Server error during checkout.");
-		}
-	});
+function changeQty(index, delta) {
+    let item = cart[index];
+    item.qty += delta;
 
-	document.getElementById("cancel-modal").addEventListener("click", () => {
-		paymentModal.style.display = "none";
-	});
+    if (item.qty <= 0) {
+        cart.splice(index, 1); 
+    } else if (item.qty > item.maxStock) {
+        item.qty = item.maxStock; 
+        alert("Maximum stock reached.");
+    }
+    
+    updateCartUI();
+}
+
+function removeItem(index) {
+    cart.splice(index, 1);
+    updateCartUI();
+}
+
+function clearCart() {
+    if (confirm("Are you sure you want to clear the current order?")) {
+        cart = [];
+        updateCartUI();
+    }
+}
+
+function openVariantModal(listingId, listingName, imgUrl) {
+    const modal = document.getElementById('variant-modal');
+    const title = document.getElementById('modal-product-name');
+    const listContainer = document.getElementById('modal-variants-list');
+
+    currentProductImage = imgUrl;
+
+    title.innerText = listingName;
+    listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color:#718096;">Loading options...</div>';
+    modal.style.display = 'flex';
+
+    const fetchUrl = templateVariantUrl.replace('0', listingId);
+
+    fetch(fetchUrl)
+        .then(response => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+        })
+        .then(data => {
+            listContainer.innerHTML = ''; 
+            
+            if (data.variants.length === 0) {
+                listContainer.innerHTML = '<div style="text-align:center; color:#e53e3e;">No stock available for this item.</div>';
+                return;
+            }
+
+            posVariantPickById = {};
+            data.variants.forEach(v => {
+                posVariantPickById[v.id] = {
+                    listingName,
+                    variantName: v.variant_name,
+                    price: v.price,
+                    stock: v.stock,
+                    attribute_list: v.attribute_list || [],
+                    attributes: v.attributes || '',
+                };
+            });
+
+            data.variants.forEach(v => {
+                const attributesBlock = buildVariantAttributesHtml(v);
+
+                listContainer.innerHTML += `
+                    <div class="variant-row" onclick="selectVariantAndClose(${v.id})">
+                        <div class="variant-info">
+                            <span class="v-name">${escapeHtml(v.variant_name)}</span>
+                            ${attributesBlock}
+                            <span class="v-sku">SKU: ${escapeHtml(v.sku)}</span>
+                        </div>
+                        <div class="variant-price-block">
+                            <span class="v-price">₱${v.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                            <span class="v-stock">Stock: ${v.stock}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching variants:', error);
+            listContainer.innerHTML = '<div style="text-align:center; color:#e53e3e;">Failed to load options. Check browser console.</div>';
+        });
+}
+
+function closeVariantModal() {
+    document.getElementById('variant-modal').style.display = 'none';
+}
+
+function selectVariantAndClose(id) {
+    const pick = posVariantPickById[id];
+    if (!pick) {
+        console.error('Missing variant pick for id', id);
+        return;
+    }
+    addToCart(
+        id,
+        pick.listingName,
+        pick.variantName,
+        pick.price,
+        pick.stock,
+        currentProductImage,
+        pick.attribute_list,
+        pick.attributes
+    );
+    closeVariantModal();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById('pos-search-input');
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const itemsGrid = document.getElementById('quick-items-grid');
+    
+    if (!itemsGrid) return; 
+
+    const searchUrl = document.getElementById('pos-data').dataset.searchUrl;
+    const originalGridHTML = itemsGrid.innerHTML;
+    let searchTimeout;
+
+    let activeFilters = {
+        category: 'all',
+        activity: 'all',
+        gender: 'all'
+    };
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                itemsGrid.innerHTML = originalGridHTML;
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                itemsGrid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #718096;">Searching for "${query}"...</div>`;
+
+                fetch(`${searchUrl}?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            itemsGrid.innerHTML = ""; 
+                            
+                            data.results.forEach(item => {
+                                const imgUrl = item.image ? item.image : 'none';
+                                const imgHtml = item.image 
+                                    ? `<img src="${item.image}" alt="${item.name}">`
+                                    : `<span class="no-img">No Img</span>`;
+
+                                itemsGrid.innerHTML += `
+                                    <div class="pos-item-card" onclick="openVariantModal(${item.id}, '${item.name.replace(/'/g, "\\'")}', '${imgUrl}')">
+                                      <div class="pos-item-img">${imgHtml}</div>
+                                      <div class="pos-item-details">
+                                        <div class="pos-item-name">${item.name}</div>
+                                        <div class="pos-item-bottom">
+                                          <span class="pos-item-stock">Select Options ➔</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            itemsGrid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #e53e3e; font-weight: 600;">No items found matching "${query}".</div>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Search error:", error);
+                        itemsGrid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #e53e3e;">Error communicating with server.</div>`;
+                    });
+            }, 300); 
+
+            document.querySelectorAll('.filter-row').forEach(row => {
+                row.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                row.querySelector('[data-val="all"]').classList.add('active');
+            });
+            activeFilters = { category: 'all', activity: 'all', gender: 'all' };
+        });
+    }
+
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            if (searchInput && searchInput.value.length > 0) {
+                searchInput.value = '';
+                itemsGrid.innerHTML = originalGridHTML;
+            }
+
+            const parentRow = this.closest('.filter-row');
+            parentRow.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            const filterType = this.dataset.type;
+            const filterVal = this.dataset.val;
+            activeFilters[filterType] = filterVal;
+
+            const itemCards = itemsGrid.querySelectorAll('.pos-item-card');
+            
+            itemCards.forEach(card => {
+                const matchCategory = (activeFilters.category === 'all' || card.dataset.category === activeFilters.category);
+                const matchActivity = (activeFilters.activity === 'all' || card.dataset.activity === activeFilters.activity);
+                const matchGender   = (activeFilters.gender === 'all'   || card.dataset.gender === activeFilters.gender);
+
+                if (matchCategory && matchActivity && matchGender) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
 });
+
+function processCheckout() {
+    if (cart.length === 0) return;
+
+    const checkoutBtn = document.getElementById('checkout-btn');
+    checkoutBtn.disabled = true;
+    checkoutBtn.innerText = "Processing...";
+
+    const payload = {
+        cart: cart.map(item => ({
+            id: item.id,
+            qty: item.qty,
+        })),
+        source: 'POS',
+    };
+
+    fetch(checkoutUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const idMsg = data.order_id ? ` Order #${data.order_id}.` : '';
+            alert(`Order created successfully!${idMsg}`);
+            cart = [];
+            updateCartUI();
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerText = "Continue";
+        } else {
+            alert("Error: " + data.message);
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerText = "Continue";
+        }
+    })
+    .catch(error => {
+        console.error('Checkout error:', error);
+        alert("A system error occurred while processing the order.");
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerText = "Continue";
+    });
+}

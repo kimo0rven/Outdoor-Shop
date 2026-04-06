@@ -145,7 +145,6 @@
     padding: 0 4px;
 }
 
-.product-category { font-size: 12px; color: #777; text-transform: uppercase; margin-bottom: 4px; }
 .product-name {
     font-size: 1rem;
     font-weight: 600;
@@ -153,11 +152,7 @@
     margin: 0;
     line-height: 1.3;
 }
-.product-variant-spec {
-    font-size: 0.85rem;
-    color: #777;
-    font-weight: 400;
-}
+
 .product-price {
     font-size: 1rem;
     font-weight: 500;
@@ -182,6 +177,7 @@
 .carousel-nav:hover { background: #f9f9f9; }
 .prev { left: 15px; }
 .next { right: 15px; }
+
 
 .repair-banner {
     position: relative;
@@ -220,21 +216,44 @@
     line-height: 1.2;
 }
 
-.btn-pill-white {
+.btn-pill {
     display: inline-block;
-    background-color: #fff;
-    color: #000;
-    padding: 12px 30px;
+    padding: 15px 35px;
     border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: background-color 0.2s, transform 0.2s;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
 }
 
-.btn-pill-white:hover {
-    background-color: #eee;
-    transform: scale(1.02);
+.btn-pill-light {
+    background-color: #ffffff;
+    color: #000000;
+}
+.btn-pill-light:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.btn-pill-dark {
+    background-color: #000000;
+    color: #ffffff;
+}
+.btn-pill-dark:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.btn-pill-outline {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
 }
 
 .activities-section {
@@ -260,6 +279,10 @@
     overflow: hidden;
     border-radius: 8px;
     margin-bottom: 20px;
+}
+
+.activity-image-wrapper:hover {
+    cursor: pointer;
 }
 
 .activity-image-wrapper img {
@@ -324,7 +347,7 @@
 
 .brands-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); 
+    grid-template-columns: repeat(6, 1fr); 
     gap: 15px;
     margin-bottom: 40px;
 }
@@ -440,29 +463,6 @@
     max-width: 600px;
 }
 
-.btn-conquer {
-    display: inline-block;
-    background-color: #fff;
-    color: #000;
-    padding: 15px 40px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    transition: background-color 0.2s;
-}
-
-.btn-guarantee:hover {
-    background-color: #eee;
-}
-
-.athletes-header-section {
-    width: 100%;
-    background-color: #fff;
-    padding: 40px 20px;
-    border-bottom: 1px solid #eaeaea;
-}
-
 .shop-category {
     max-width: 1400px;
     margin: 60px auto;
@@ -514,22 +514,6 @@
     line-height: 1.5;
     margin: 0;
     max-width: 60%;
-}
-
-.btn-solid-black {
-    background-color: #000;
-    color: #fff;
-    padding: 15px 35px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: opacity 0.2s;
-}
-
-.btn-solid-black:hover {
-    opacity: 0.8;
 }
 
 .sub-grid {
@@ -603,21 +587,6 @@
     margin-bottom: 40px;
 }
 
-.btn-solid-green {
-    background-color: #183028;
-    color: #fff;
-    padding: 15px 35px;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: background-color 0.2s;
-}
-
-.btn-solid-green:hover {
-    background-color: #2a473d;
-}
-
 .impact-image {
     flex: 1;
 }
@@ -628,155 +597,211 @@
     object-fit: cover;
 }
 
-.site-footer {
-    background-color: #f4f4f2;
-    color: #000;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    position: relative;
-    padding-top: 60px;
-    overflow: hidden;
+
+@media (max-width: 1024px) {
+    .new-arrivals-container {
+        padding: 50px 20px;
+    }
+
+    .product-card {
+        flex: 0 0 calc(22% - 15px);
+        max-width: calc(22% - 15px);
+    }
+
+    .repair-content h2 {
+        font-size: 36px;
+    }
+
+    .conquer-badge h2 {
+        font-size: 40px;
+    }
+
+    .impact-split {
+        min-height: 520px;
+    }
+
+    .impact-content {
+        padding: 50px;
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
-.footer-top {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 40px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 40px;
-    position: relative;
-    z-index: 2;
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 70vh;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        letter-spacing: 1.5px;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin: 0 auto 22px auto;
+    }
+
+    .new-arrivals-container {
+        padding: 40px 16px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        margin-bottom: 18px;
+    }
+
+    
+    .product-card {
+        flex: 0 0 62%;
+        max-width: 62%;
+    }
+
+    .carousel-viewport {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .carousel-track {
+        scroll-snap-align: start;
+    }
+
+    .product-card {
+        scroll-snap-align: start;
+    }
+
+    .carousel-nav {
+        display: none;
+    }
+
+    .repair-banner {
+        height: auto;
+        min-height: 320px;
+        padding: 60px 0;
+    }
+
+    .repair-content h2 {
+        font-size: 28px;
+        margin-bottom: 18px;
+    }
+
+    .activities-section {
+        padding: 40px 16px;
+    }
+
+    .activities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .activity-card h3 {
+        font-size: 20px;
+    }
+
+    .conquer-section {
+        height: auto;
+        min-height: 320px;
+        padding: 60px 0;
+    }
+
+    .conquer-badge {
+        padding: 12px 18px;
+    }
+
+    .conquer-badge h2 {
+        font-size: 28px;
+    }
+
+    .conquer-content p {
+        font-size: 15px;
+        padding: 0 10px;
+    }
+
+    .shop-category {
+        margin: 40px auto;
+        padding: 0 16px;
+    }
+
+    .category-heading {
+        font-size: 22px;
+        margin-bottom: 22px;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .feature-bottom p {
+        max-width: 100%;
+    }
+
+    .sub-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 14px;
+    }
+
+    .impact-split {
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .impact-content {
+        padding: 40px 20px;
+        align-items: flex-start;
+    }
+
+    .impact-content h2 {
+        font-size: 30px;
+    }
+
+    .impact-content p {
+        max-width: none;
+    }
+
+    .impact-image {
+        min-height: 280px;
+    }
+
+    .brands-section {
+        padding: 40px 16px;
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
 }
 
-.footer-badge {
-    flex: 0 0 200px;
+@media (max-width: 480px) {
+    .hero-content {
+        padding: 16px;
+    }
+
+    .hero-title {
+        font-size: 1.9rem;
+    }
+
+    .btn-pill {
+        padding: 14px 22px;
+        font-size: 13px;
+    }
+
+    .product-card {
+        flex: 0 0 78%;
+        max-width: 78%;
+    }
+
+    .sub-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.guarantee-box {
-    border: 2px solid #000;
-    border-radius: 8px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.guarantee-box strong {
-    font-size: 16px;
-    line-height: 1.1;
-    text-transform: uppercase;
-}
-
-.guarantee-sub {
-    font-size: 10px;
-    line-height: 1.2;
-    border-left: 1px solid #000;
-    padding-left: 10px;
-}
-
-.footer-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    flex: 2;
-}
-
-.footer-column h3 {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: 0.5px;
-}
-
-.footer-column .mt-4 {
-    margin-top: 40px;
-}
-
-.footer-column ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-column li {
-    margin-bottom: 12px;
-}
-
-.footer-column a {
-    text-decoration: none;
-    color: #333;
-    font-size: 13px;
-    transition: color 0.2s;
-}
-
-.footer-column a:hover {
-    color: #000;
-    text-decoration: underline;
-}
-
-.footer-social {
-    flex: 0 0 250px;
-}
-
-.footer-social h3 {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-.social-icons img {
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    object-fit: contain;
-    filter: brightness(0); 
-}
-
-.social-icons a {
-    width: 24px;
-    height: 24px;
-    overflow: hidden;
-    display: inline-block;
-}
-
-.social-icons {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    width: auto;
-}
-
-
-.footer-illustration {
-    width: 100%;
-    height: 550px; 
-    margin-top: -20px;
-    background-image: url('../images/osprey-footer.png');
-    background-size: 100% auto; 
-    background-position: bottom center;
-    background-repeat: no-repeat;
-    position: relative;
-    z-index: 1; 
-}
-
-.footer-bottom {
-    background-color: #000;
-    color: #fff;
-    padding: 20px 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    position: relative;
-    z-index: 3;
-}
-
-.footer-bottom a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.footer-bottom a:hover {
-    text-decoration: underline;
-}
 

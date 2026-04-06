@@ -1,0 +1,226 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/checkout.css' %}?v=2" />
+{% endblock %}
+
+{% block content %}
+  <main class="checkout-container">
+    <div class="checkout-steps">
+      <div class="step-card" id="shipping-section">
+        <div class="step-header">
+          <span class="step-number" id="shipping-number">1</span>
+          <h2>Shipping</h2>
+          <button id="edit-shipping-btn" class="edit-btn" style="{% if not saved_address %}display: none;{% endif %}">Modify Address</button>
+        </div>
+
+        <div id="address-form-container" style="{% if saved_address %}display: none;{% endif %}">
+          <form id="shipping-form" class="custom-form">
+            {% csrf_token %}
+
+            <div class="form-group full-width">
+              <label>Email Address *</label>
+              <input type="email" name="email" id="checkout-email" value="{{ request.user.email }}" required readonly class="locked-input" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>First name *</label>
+                <input type="text" name="first_name" id="checkout-firstname" required />
+              </div>
+              <div class="form-group">
+                <label>Last name *</label>
+                <input type="text" name="last_name" id="checkout-lastname" required />
+              </div>
+            </div>
+
+            <div class="form-group full-width" style="margin-bottom: 15px;">
+              <label>Phone *</label>
+              <input type="tel" name="phone_number" id="checkout-phone" required />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Address *</label>
+              <input type="text" name="address_line_1" id="checkout-address1" placeholder="Start typing your address" required />
+            </div>
+            <div class="form-group full-width">
+              <label>Address line 2</label>
+              <input type="text" name="address_line_2" id="checkout-address2" placeholder="Apt, Suite, Unit (optional)" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>City *</label>
+                <input type="text" name="city" id="checkout-city" required />
+              </div>
+              <div class="form-group">
+                <label>State/Province *</label>
+                <input type="text" name="state" id="checkout-state" required />
+              </div>
+              <div class="form-group" style="flex: 0.5;">
+                <label>Zip Code *</label>
+                <input type="text" name="postal_code" id="checkout-zip" required />
+              </div>
+            </div>
+
+            <button type="button" id="save-address-btn" class="btn-black">Save address</button>
+          </form>
+        </div>
+
+        <div id="address-summary-container" style="{% if not saved_address %}display: none;{% endif %}; padding-top: 20px;">
+          <div class="review-box">
+            <div class="review-row">
+              <div class="review-label">Contact</div>
+              <div class="review-content">{{ request.user.email }}</div>
+            </div>
+            <div class="review-row">
+              <div class="review-label">Ship to</div>
+              <div class="review-content">
+                <div id="summary-name" style="font-weight: 500; margin-bottom: 4px;">{{ saved_address.first_name }} {{ saved_address.last_name }}</div>
+                <span id="summary-address1">{{ saved_address.address_line_1 }}</span>
+                <span id="summary-address2">
+                  {% if saved_address.address_line_2 %}
+                    , {{ saved_address.address_line_2 }}
+                  {% endif %}
+                </span>,
+                <span id="summary-city">{{ saved_address.city }}</span>,
+                <span id="summary-state">{{ saved_address.state }}</span>
+                <span id="summary-zip">{{ saved_address.postal_code }}</span>,
+                <span id="summary-country">{{ saved_address.country|default:'Philippines' }}</span>
+                <div id="summary-phone" style="margin-top: 4px; color: #666; font-size: 13px;">{{ saved_address.phone_number }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="delivery-options" id="delivery-options">
+            <h3 class="delivery-title">Delivery method</h3>
+            <label class="delivery-radio">
+              <input type="radio" name="delivery_method" value="standard" checked />
+              <div class="radio-content">
+                <strong>Standard Shipping · Free</strong>
+                <span style="color: #666; font-size: 13px;">3 - 5 business days</span>
+              </div>
+            </label>
+            <button type="button" id="continue-payment-btn" class="btn-black" style="margin-top: 20px;">Continue to payment</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card disabled-step" id="payment-section">
+        <div class="step-header">
+          <span class="step-number" id="payment-number">2</span>
+          <h2>Payment</h2>
+        </div>
+
+        <div id="payment-container" style="display: none; padding-top: 20px;">
+          <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px; font-size: 14px; cursor: pointer;">
+            <input type="checkbox" id="terms-checkbox" />
+            <span>I have read and I accept the sales terms and conditions.</span>
+          </label>
+          <div id="paypal-button-container" style="opacity: 0.5; pointer-events: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-summary">
+      <div class="summary-header">
+        <h2 style="font-size: 18px; margin: 0;">Your cart</h2>
+        <a href="{% url 'cart_detail' %}" class="edit-btn">Modify Cart</a>
+      </div>
+
+      <div class="summary-items">
+        {% for item in cart %}
+          <div class="summary-item">
+            <div class="summary-img">
+              {% if item.variant and item.variant.thumbnail %}
+                <img src="{{ item.variant.thumbnail.url }}" alt="{{ item.product.name }}" />
+              {% elif item.product.thumbnail %}
+                <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.name }}" />
+              {% else %}
+                <i class="material-icons" style="color: #ccc;">&#xe3f4;</i>
+              {% endif %}
+            </div>
+            <div class="summary-details">
+              <strong>{{ item.product.name }}</strong>
+              {% if item.variant %}
+                <div class="attr-list">
+                  {% for attr in item.variant.attributes.all %}
+                    {{ attr.name }}: {{ attr.value }}{% if not forloop.last %} | {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <div class="qty-price">
+                <span>Qty: {{ item.quantity }}</span>
+                <strong>₱{{ item.total_price|intcomma }}</strong>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="summary-totals">
+        <div class="total-row">
+          <span>Subtotal</span><span>₱{{ cart.get_total_price|intcomma }}</span>
+        </div>
+        <div class="total-row">
+          <span>Shipping</span><span style="color: #28a745;">Free shipping</span>
+        </div>
+
+        <div class="total-row grand-total">
+          <span>Total</span><span>₱{{ cart.get_total_price|intcomma }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="address-sidebar" id="address-sidebar">
+      <div class="sidebar-header">
+        <h2>Saved addresses</h2>
+        <button class="close-btn" id="close-sidebar-btn">&times;</button>
+      </div>
+
+      <button class="btn-outline full-width" id="use-new-address-btn" style="margin-bottom: 20px;">Use new address</button>
+
+      <div class="address-list">
+        {% for addr in addresses %}
+          <label class="address-card {% if addr.id == saved_address.id %}selected{% endif %}">
+            {% if addr.id == saved_address.id %}
+              <input type="radio" name="selected_address" value="{{ addr.id }}" data-firstname="{{ addr.first_name }}" data-lastname="{{ addr.last_name }}" data-phone="{{ addr.phone_number }}" data-address1="{{ addr.address_line_1 }}" data-address2="{{ addr.address_line_2 }}" data-city="{{ addr.city }}" data-state="{{ addr.state }}" data-zip="{{ addr.postal_code }}" checked />
+            {% else %}
+              <input type="radio" name="selected_address" value="{{ addr.id }}" data-firstname="{{ addr.first_name }}" data-lastname="{{ addr.last_name }}" data-phone="{{ addr.phone_number }}" data-address1="{{ addr.address_line_1 }}" data-address2="{{ addr.address_line_2 }}" data-city="{{ addr.city }}" data-state="{{ addr.state }}" data-zip="{{ addr.postal_code }}" />
+            {% endif %}
+            <div class="address-details">
+              <strong>{{ addr.first_name }} {{ addr.last_name }}</strong>
+              <span>{{ addr.address_line_1 }}</span>
+              {% if addr.address_line_2 %}
+                <span>{{ addr.address_line_2 }}</span>
+              {% endif %}
+              <span>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</span>
+              <span>{{ addr.country|default:'Philippines' }}</span>
+              <a href="#" class="edit-address-link" data-id="{{ addr.id }}">Edit address</a>
+            </div>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    window.checkoutConfig = {
+      totalAmount: "{{ cart.get_total_price|stringformat:'.2f' }}",
+      processOrderUrl: "{% url 'process_order' %}",
+      orderSuccessUrl: "{% url 'order_success' %}",
+      saveAddressUrl: "{% url 'save_address' %}",
+      csrfToken: '{{ csrf_token }}',
+      hasSavedAddress: "{{ saved_address|yesno:'true,false' }}" === 'true'
+    }
+  </script>
+
+  <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=PHP"></script>
+  <script src="{% static 'OutdoorShop/js/checkout.js' %}?v=2"></script>
+{% endblock %}

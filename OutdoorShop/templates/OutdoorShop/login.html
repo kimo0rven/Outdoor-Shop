@@ -1,0 +1,73 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+
+{% block title %}
+  Sign in | Aginod Outdoor Shop
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/auth.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="auth-page">
+    {% if messages %}
+      <div class="auth-messages">
+        {% for message in messages %}
+          <div class="msg {% if 'error' in message.tags %}
+              msg-error
+            {% elif 'success' in message.tags %}
+              msg-success
+            {% else %}
+              msg-info
+            {% endif %}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="auth-card">
+      <h1 class="auth-heading">Access your account</h1>
+
+      <form method="post" class="auth-form" action="" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="auth-nonfield">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="auth-field">
+          <label for="{{ form.email.id_for_label }}">Email address <span class="required">*</span></label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="auth-field-error">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="auth-field">
+          <label for="{{ form.password.id_for_label }}">Password <span class="required">*</span></label>
+          <div class="auth-password-wrap">
+            {{ form.password }}
+            <button type="button" class="auth-toggle-password" aria-label="Show password"></button>
+          </div>
+          {% if form.password.errors %}
+            <div class="auth-field-error">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+
+        <p class="auth-forgot">
+          <a href="#">Forgot your password?</a>
+        </p>
+
+        <button type="submit" class="auth-btn-primary">Sign in</button>
+      </form>
+    </div>
+
+    <p class="auth-footer">
+      Not a member yet? <a href="{% url 'register' %}">Create your account</a>
+    </p>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'OutdoorShop/js/auth.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/address_book.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="address-book-page">
+    <div class="address-book-header">
+      <h2>Address Book</h2>
+      <a href="{% url 'address_create' %}" class="btn-shop">Add New Address</a>
+    </div>
+
+    {% if shipping_addresses %}
+      <div class="address-book-list">
+        {% for address in shipping_addresses %}
+          <div class="address-book-item {% if address.is_default %}is-default{% endif %}">
+            <div class="address-book-item-header">
+              <div class="address-book-name">
+                {{ address.first_name }} {{ address.last_name }}
+                {% if address.is_default %}
+                  <span class="default-badge">Default</span>
+                {% endif %}
+              </div>
+
+              <div class="address-book-actions">
+                {% if not address.is_default %}
+                  <form action="{% url 'set_default_address' address.id %}" method="post" class="inline-form">
+                    {% csrf_token %}
+                    <button type="submit" class="link-action link-action-primary">Set Default</button>
+                  </form>
+                {% endif %}
+                <a href="{% url 'address_edit' address.id %}" class="link-action link-action-primary">Edit</a>
+                <form action="{% url 'address_delete' address.id %}" method="post" class="inline-form">
+                  {% csrf_token %}
+                  <button type="submit" class="link-action link-action-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="address-book-line">
+              {{ address.address_line_1 }}{% if address.address_line_2 %}
+                , {{ address.address_line_2 }}
+              {% endif %}
+            </div>
+            <div class="address-book-line">{{ address.city }}, {{ address.state }} {{ address.postal_code }} ({{ address.country }})</div>
+            <div class="address-book-line">Phone: {{ address.phone_number }}</div>
+
+            {% if address.address_type %}
+              <div class="address-book-line address-type">Type: {{ address.address_type }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-title">No saved addresses yet</div>
+        <div class="empty-text">Add your first shipping address.</div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

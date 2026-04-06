@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from inventory.models import ListingVariant
-from OutdoorShop.models import ShippingAddress
+from accounts.models import ShippingAddress
 
 class Order(models.Model):
     SOURCE_POS = 'POS'
@@ -13,9 +13,14 @@ class Order(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
+        ('pending', 'Pending Payment'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
+        ('returned', 'Returned'),
+        ('refunded', 'Refunded'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,limit_choices_to={'is_customer': True},  related_name='customer_orders')
@@ -24,6 +29,13 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='completed')
+    shipping_address = models.ForeignKey(
+        ShippingAddress, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='shipping_orders'
+    )
     
     order_source = models.CharField(
         max_length=20, 
@@ -62,3 +74,6 @@ class Payment(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     payment_status = models.CharField(max_length=50, default='Completed')
     date_modified = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Payment #{self.id} ({self.method})"

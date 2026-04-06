@@ -1,0 +1,218 @@
+.profile-page {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.profile-header {
+  margin-bottom: 18px;
+}
+
+.profile-header h2 {
+  margin: 0 0 8px 0;
+}
+
+.sub-text {
+  color: #666;
+  margin: 0;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.profile-card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.profile-card h3 {
+  margin: 0 0 12px 0;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: #777;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #111;
+  font-weight: 600;
+  text-align: right;
+}
+
+.default-address-preview {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e8f3ff;
+  background: #f7fbff;
+}
+
+.default-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.default-line {
+  color: #222;
+  margin: 3px 0;
+}
+
+.profile-actions {
+  margin-top: 14px;
+}
+
+.password-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f1f1;
+}
+
+.form-row {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+.form-row input {
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  outline: none;
+}
+
+.form-row input:focus {
+  border-color: #bcd3ff;
+  box-shadow: 0 0 0 3px rgba(28, 99, 255, 0.12);
+}
+
+.form-errors {
+  background: #fff1f0;
+  color: #8a1f1f;
+  border: 1px solid #ffd6d1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.field-error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.set-default-btn {
+  padding: 8px 14px;
+  background: #111;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.set-default-btn:hover {
+  background: #333;
+}
+
+.btn-shop {
+  display: inline-block;
+  text-decoration: none;
+  padding: 12px 24px;
+  background: #111;
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-shop:hover {
+  background: #333;
+}
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.address-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fcfcfc;
+}
+
+.address-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.address-person {
+  font-weight: 700;
+}
+
+.address-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #1a4fff;
+  font-weight: 700;
+}
+
+.address-line {
+  color: #333;
+  margin: 4px 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 28px 14px;
+  background: #f8f9fa;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
+.empty-title {
+  margin: 0 0 6px 0;
+  font-weight: 800;
+}
+
+.empty-text {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 850px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -23,13 +23,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 load_dotenv()
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-dev-only-change-for-production'
+    else:
+        raise ValueError('SECRET_KEY must be set when DEBUG is False')
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 
 ALLOWED_HOSTS = ['192.168.30.10', 'localhost', '127.0.0.1']
+
+_extra = [o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()]
+CSRF_TRUSTED_ORIGINS = _extra or [
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:8080',
+    'http://localhost:8000',
+    'http://localhost:8080',
+    'http://192.168.30.10:8000',
+    'http://192.168.30.10:8080',
+]
 
 
 # Application definition
@@ -70,6 +86,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'OutdoorShop.context_processors.cart',
+                'OutdoorShop.context_processors.popular_searches',
             ],
         },
     },
@@ -141,3 +159,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGOUT_REDIRECT_URL = 'login'
+
+LOGIN_URL = 'login'

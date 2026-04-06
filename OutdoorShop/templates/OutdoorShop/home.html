@@ -21,38 +21,27 @@
       <div class="hero-content">
         <h1 class="hero-title">High Quality. Low Impact.</h1>
         <p class="hero-subtitle">We sell products that align with our sustainability vision of becoming the most progressive, transparent and sustainable outdoor hardgoods shop.</p>
-        <a href="#" class="hero-btn">Shop Now</a>
+        <a href="{% url 'all_products' %}" class="btn-pill btn-pill-light">Shop Now</a>
       </div>
     </div>
 
     <section class="new-arrivals-container">
       <h2 class="section-title">New Arrivals</h2>
-
       <div class="carousel-viewport">
         <div class="carousel-track" id="carouselTrack">
           {% for listing in new_arrivals %}
             <div class="product-card">
-              <div class="product-image-wrapper">
-                <span class="badge-new">New</span>
+              <a href="{% url 'product_detail' listing.id %}">
+                <div class="product-image-wrapper">
+                  <span class="badge-new">New</span>
 
-                {% if listing.thumbnail %}
-                  <img src="{{ listing.thumbnail.url }}" alt="{{ listing.name }}" />
-                {% else %}
-                  <img src="{% static 'OutdoorShop/images/placeholder.jpg' %}" alt="No image available" />
-                {% endif %}
-              </div>
-
-              <div class="product-info">
-                <h3 class="product-name">{{ listing.name }}</h3>
-
-                <p class="product-price">
-                  {% if listing.base_price %}
-                    ₱{{ listing.base_price }}
+                  {% if listing.card_image_url %}
+                    <img src="{{ listing.card_image_url }}" alt="{{ listing.name }}" />
                   {% else %}
-                    <span style="color: #777; font-size: 0.9em;">Price TBA</span>
+                    <img src="{% static 'OutdoorShop/images/placeholder.svg' %}" alt="No image available" />
                   {% endif %}
-                </p>
-              </div>
+                </div>
+              </a>
             </div>
           {% endfor %}
         </div>
@@ -65,7 +54,7 @@
       <div class="repair-content">
         <span class="overline">Innovation Unusual</span>
         <h2>How to care for and repair your gear.</h2>
-        <a href="#" class="btn-pill-white">Videos & Guides</a>
+        <a href="#" class="hero-btn">Videos & Guides</a>
       </div>
     </section>
 
@@ -73,37 +62,37 @@
       <div class="activities-grid">
         <div class="activity-card">
           <div class="activity-image-wrapper">
-            <img src="{% static 'OutdoorShop/images/5052147.jpg' %}" alt="Camping" />
+            <a href="{% url 'all_products' %}?activity=4&sort=newest"><img src="{% static 'OutdoorShop/images/5052147.jpg' %}" alt="Camping" /></a>
           </div>
           <h3>Camping</h3>
           <div class="activity-links">
-            <a href="#">Explore</a>
-            <a href="#">Men's</a>
-            <a href="#">Women's</a>
+            <a href="{% url 'all_products' %}?activity=4&sort=newest">Explore</a>
+            <a href="{% url 'all_products' %}?activity=4&sort=newest&gender=mens">Men's</a>
+            <a href="{% url 'all_products' %}?activity=4&sort=newest&gender=womens">Women's</a>
           </div>
         </div>
 
         <div class="activity-card">
           <div class="activity-image-wrapper">
-            <img src="{% static 'OutdoorShop/images/9790264.jpg' %}" alt="Trail Running" />
+            <a href="{% url 'all_products' %}?activity=2&sort=newest"><img src="{% static 'OutdoorShop/images/9790264.jpg' %}" alt="Trail Running" /></a>
           </div>
           <h3>Trail Running</h3>
           <div class="activity-links">
-            <a href="#">Explore</a>
-            <a href="#">Men's</a>
-            <a href="#">Women's</a>
+            <a href="{% url 'all_products' %}?activity=2&sort=newest">Explore</a>
+            <a href="{% url 'all_products' %}?activity=2&sort=newest&gender=mens">Men's</a>
+            <a href="{% url 'all_products' %}?activity=2&sort=newest&gender=womens">Women's</a>
           </div>
         </div>
 
         <div class="activity-card">
           <div class="activity-image-wrapper">
-            <img src="{% static 'OutdoorShop/images/2577274.jpg' %}" alt="Fly Fishing" />
+            <a href="{% url 'all_products' %}?activity=6&sort=newest"><img src="{% static 'OutdoorShop/images/2577274.jpg' %}" alt="Fly Fishing" /></a>
           </div>
           <h3>Lifestyle</h3>
           <div class="activity-links">
-            <a href="#">Explore</a>
-            <a href="#">Men's</a>
-            <a href="#">Women's</a>
+            <a href="{% url 'all_products' %}?activity=6&sort=newest">Explore</a>
+            <a href="{% url 'all_products' %}?activity=6&sort=newest&gender=mens">Men's</a>
+            <a href="{% url 'all_products' %}?activity=6&sort=newest&gender=womens">Women's</a>
           </div>
         </div>
       </div>
@@ -114,8 +103,8 @@
         <div class="conquer-badge">
           <h2>CONQUER THE OUTDOORS WITH AGINOD</h2>
         </div>
-        <p>Where every trail leads to triumph</p>
-        <a href="#" class="hero-btn">SHOP NOW</a>
+        <p>From basecamp to summit and every rugged mile in between, we’ve got you covered with gear built for the wild.</p>
+        <a href="{% url 'all_products' %}" class="btn-pill btn-pill-light">Explore Gears</a>
       </div>
     </section>
 
@@ -130,7 +119,7 @@
             <p>
               <strong>New Arrivals.</strong> Our latest lineup delivers the perfect balance of performance, comfort and simplicity.
             </p>
-            <a href="#" class="hero-btn" style="background-color: black; color: white">SHOP NOW</a>
+            <a href="{% url 'all_products' %}" class="btn-pill btn-pill-dark">Shop Now</a>
           </div>
         </div>
 
@@ -160,7 +149,7 @@
         <div class="impact-icon"></div>
         <h2>BORN FROM THE WILD</h2>
         <p>At Aginod, our essence is forged in the untamed wilderness. Founded by extreme adventurers for adventurers, we know firsthand that the right gear can mean the difference between a story of triumph and a lesson in resilience. Our mission? To equip the bold—the trail runners, hikers, and mountaineers—with outdoor apparel, accessories, and gear that stand up to the ultimate tests of nature.</p>
-        <a href="#" class="hero-btn" style="background-color: black; color: white">SHOP NOW</a>
+        <a href="{% url 'all_products' %}" class="btn-pill btn-pill-dark">Shop Now</a>
       </div>
       <div class="impact-image">
         <img src="{% static '/OutdoorShop/images/HOOSUS-1733_Sustainability_Update.jpg' %}" alt="Nature" />
@@ -171,60 +160,62 @@
       <div class="brands-container">
         <div class="brands-grid">
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/leki_logo.png' %}" alt="LEKI" /></a>
-            <a href="#" class="brand-label">LEKI &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=LEKI&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/leki_logo.png' %}" alt="LEKI" /></a>
+            <a href="{% url 'all_products' %}?brand=LEKI&sort=newest" class="brand-label">LEKI &rarr;</a>
+          </div>
+          <div class="brand-item">
+            <a href="{% url 'all_products' %}?brand=Osprey&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/osprey_logo.jpg' %}" alt="Osprey" /></a>
+            <a href="{% url 'all_products' %}?brand=Osprey&sort=newest" class="brand-label">Osprey &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/osprey_logo.jpg' %}" alt="Osprey" /></a>
-            <a href="#" class="brand-label">Osprey &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Patagonia&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/patagonia_logo.jpg' %}" alt="Patagonia" /></a>
+            <a href="{% url 'all_products' %}?brand=Patagonia&sort=newest" class="brand-label">Patagonia &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/patagonia_logo.jpg' %}" alt="Patagonia" /></a>
-            <a href="#" class="brand-label">Patagonia &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Arcteryx&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/arcteryx_logo.jpg' %}" alt="Arcteryx" /></a>
+            <a href="{% url 'all_products' %}?brand=Arcteryx&sort=newest" class="brand-label">Arc'teryx &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/arcteryx_logo.jpg' %}" alt="Arcteryx" /></a>
-            <a href="#" class="brand-label">Arc'teryx &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Columbia&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/columbia-sportswear_logo.png' %}" alt="Columbia" /></a>
+            <a href="{% url 'all_products' %}?brand=Columbia&sort=newest" class="brand-label">Columbia &rarr;</a>
+          </div>
+          <div class="brand-item">
+            <a href="{% url 'all_products' %}?brand=MONT-BELL&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/mont-bell_logo.jpg' %}" alt="montbell" /></a>
+            <a href="{% url 'all_products' %}?brand=MONT-BELL&sort=newest" class="brand-label">MONT-BELL &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/columbia-sportswear_logo.png' %}" alt="Columbia" /></a>
-            <a href="#" class="brand-label">Columbia &rarr;</a>
-          </div>
-        </div>
-
-        <div class="brands-grid">
-          <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/mont-bell_logo.jpg' %}" alt="montbell" /></a>
-            <a href="#" class="brand-label">MONT-BELL &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Naturehike&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/Naturehike_logo.jpg' %}" alt="Naturehike" /></a>
+            <a href="{% url 'all_products' %}?brand=Naturehike&sort=newest" class="brand-label">NatureHike &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/Naturehike_logo.jpg' %}" alt="Naturehike" /></a>
-            <a href="#" class="brand-label">NatureHike &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=T8&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/T8_logo.jpeg' %}" alt="T8" /></a>
+            <a href="{% url 'all_products' %}?brand=T8&sort=newest" class="brand-label">T8 &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/T8_logo.jpeg' %}" alt="T8" /></a>
-            <a href="#" class="brand-label">T8 &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Nitecore&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/Nitecore_logo.jpg' %}" alt="Nitecore" /></a>
+            <a href="{% url 'all_products' %}?brand=Nitecore&sort=newest" class="brand-label">Nitecore &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/Nitecore_logo.jpg' %}" alt="38Explore" /></a>
-            <a href="#" class="brand-label">Nitecore &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=Salomon&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/salomon_logo.jpg' %}" alt="Salomon" /></a>
+            <a href="{% url 'all_products' %}?brand=Salomon&sort=newest" class="brand-label">Salomon &rarr;</a>
           </div>
 
           <div class="brand-item">
-            <a href="#" class="brand-box"><img src="{% static 'OutdoorShop/images/salomon_logo.jpg' %}" alt="Salomon" /></a>
-            <a href="#" class="brand-label">Salomon &rarr;</a>
+            <a href="{% url 'all_products' %}?brand=The North Face&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/The_North_Face_logo.jpg' %}" alt="The North Face" /></a>
+            <a href="{% url 'all_products' %}?brand=The North Face&sort=newest" class="brand-label">The North Face &rarr;</a>
           </div>
-        </div>
 
-        <div class="view-all-container">
-          <a href="#" class="hero-btn" style="background-color: black; color: white">View all</a>
+          <div class="brand-item">
+            <a href="{% url 'all_products' %}?brand=Rab&sort=newest" class="brand-box"><img src="{% static 'OutdoorShop/images/rab_logo.png' %}" alt="Rab" /></a>
+            <a href="{% url 'all_products' %}?brand=Rab&sort=newest" class="brand-label">Rab &rarr;</a>
+          </div>
         </div>
       </div>
     </section>

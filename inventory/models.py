@@ -65,6 +65,13 @@ class Listing(models.Model):
         ('archived', 'Archived'),
     ]
     
+    GENDER_CHOICES = [
+        ('unisex', 'Unisex'),
+        ('mens', "Men's"),
+        ('womens', "Women's"),
+        ('kids', 'Kids'),
+    ]
+    
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='listings')
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name='listings', null=True, blank=True)
     name = models.CharField(max_length=255)
@@ -82,6 +89,12 @@ class Listing(models.Model):
         null=True, 
         blank=True, 
         related_name='listings'
+    )
+    gender = models.CharField(
+        max_length=10, 
+        choices=GENDER_CHOICES, 
+        default='unisex',
+        help_text="Target gender for this product"
     )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -168,7 +181,6 @@ def move_listing_thumbnail(sender, instance, created, **kwargs):
             os.rename(old_path, new_path)
             relative_new_path = f'products/{instance.id}/{new_filename}'
             Listing.objects.filter(id=instance.id).update(thumbnail=relative_new_path)
-
 
 @receiver(post_save, sender=ListingVariant)
 def move_variant_thumbnail(sender, instance, created, **kwargs):

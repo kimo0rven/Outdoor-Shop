@@ -1,0 +1,131 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+{% load humanize %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/product_detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <main class="product-page-container">
+    <div class="product-layout">
+      <div class="product-images">
+        <div class="main-image-wrapper">
+          {% if default_main_image_url %}
+            <img src="{{ default_main_image_url }}" alt="{{ product.name }}" id="mainProductImg" />
+          {% else %}
+            <img src="{% static 'OutdoorShop/images/placeholder.jpg' %}" alt="No Image" id="mainProductImg" />
+          {% endif %}
+        </div>
+
+        {% if variant_gallery_images %}
+          <div class="gallery-thumbnails">
+            {% for img_url in variant_gallery_images %}
+              <img src="{{ img_url }}" class="gallery-thumb {% if forloop.first %}active{% endif %}" onclick="swapImage(this)" alt="Variant image" />
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="product-info-panel">
+        <nav class="breadcrumb">
+          <a href="{% url 'home' %}">Home</a> /
+          <a href="#">{{ product.category.category_name }}</a>
+        </nav>
+
+        <h1 class="product-name-title">{{ product.name }}</h1>
+
+        <div class="product-price-tag" id="displayPrice">
+          {% if product.base_price %}
+            ₱{{ product.base_price|floatformat:2|intcomma }}
+          {% else %}
+            Price on Request
+          {% endif %}
+        </div>
+
+        <form action="{% url 'cart_add' %}" method="POST" class="add-to-cart-form">
+          {% csrf_token %}
+
+          {% if grouped_attributes %}
+            <div class="dynamic-attribute-section">
+              <input type="hidden" name="variant_id" id="selectedVariantId" required />
+
+              {% for attr_name, attr_values in grouped_attributes.items %}
+                <div class="attribute-group" data-group-name="{{ attr_name }}">
+                  <h3>{{ attr_name }}</h3>
+                  <div class="attribute-options">
+                    {% for value in attr_values %}
+                      <button type="button" class="attr-btn" data-value="{{ value }}" onclick="selectAttribute(this)">{{ value }}</button>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+
+              <div class="product-meta">
+                <p>
+                  <strong>Availability:</strong>
+                  <span id="displayStock">
+                    {% if variants %}
+                      Select options to see stock
+                    {% else %}
+                      <span style="color: #d9534f; font-weight: 600;">Out of Stock</span>
+                    {% endif %}
+                  </span>
+                </p>
+              </div>
+
+              <p id="availabilityWarning" style="color: #d9534f; font-size: 13px; display: none; margin-top: 10px; font-weight: 600;">Currently unavailable or out of stock.</p>
+            </div>
+          {% else %}
+            <input type="hidden" name="product_id" value="{{ product.id }}" />
+          {% endif %}
+
+          <div class="product-actions">
+            <div class="qty-selector">
+              <button type="button" class="qty-btn" onclick="updateQty(-1)">-</button>
+              <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="99" />
+              <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
+            </div>
+
+            {% if variants %}
+              <button type="submit" class="btn-add-cart" id="addToCartBtn">Add to Cart</button>
+            {% else %}
+              <button type="button" class="btn-add-cart" id="addToCartBtn" disabled style="background-color: #ccc; border-color: #ccc; cursor: not-allowed; opacity: 0.8;">Currently Unavailable</button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div> {% if product.description %}
+      <section class="full-description-section">
+        <h2 class="section-title">Product Details</h2>
+        <div class="description-content">{{ product.description|linebreaks }}</div>
+      </section>
+    {% endif %}
+
+    {% if related_products %}
+      <section class="related-section">
+        <h2 class="section-title">You Might Also Like</h2>
+        <div class="related-grid">
+          {% for item in related_products %}
+            <a href="{% url 'product_detail' item.pk %}" class="related-card">
+              {% if item.thumbnail %}
+                <img src="{{ item.thumbnail.url }}" alt="{{ item.name }}" />
+              {% else %}
+                <img src="{% static 'OutdoorShop/images/placeholder.jpg' %}" alt="No Image" />
+              {% endif %}
+              <h4>{{ item.name }}</h4>
+              <p>₱{{ item.base_price|default:'---'|intcomma }}</p>
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    window.variantMapping = JSON.parse('{{ variant_mapping_json|escapejs }}')
+  </script>
+
+  <script src="{% static 'OutdoorShop/js/product_detail.js' %}"></script>
+{% endblock %}

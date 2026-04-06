@@ -1,0 +1,139 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/profile.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="profile-page">
+    <div class="profile-header">
+      <h2>My Profile</h2>
+      <p class="sub-text">Review your account details and saved shipping addresses.</p>
+    </div>
+
+    <div class="profile-grid">
+      <section class="profile-card">
+        <h3>Account Details</h3>
+
+        <div class="detail-row">
+          <span class="detail-label">Name</span>
+          <span class="detail-value">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">{{ request.user.email }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Orders</span>
+          <span class="detail-value">{{ orders_count }}</span>
+        </div>
+
+        {% if default_address %}
+          <div class="default-address-preview">
+            <div class="default-title">Default Shipping Address</div>
+            <div class="default-line">
+              {{ default_address.address_line_1 }}{% if default_address.address_line_2 %}
+                , {{ default_address.address_line_2 }}
+              {% endif %}
+            </div>
+            <div class="default-line">{{ default_address.city }}, {{ default_address.state }} {{ default_address.postal_code }} ({{ default_address.country }})</div>
+            <div class="default-line">Phone: {{ default_address.phone_number }}</div>
+          </div>
+        {% endif %}
+
+        <div class="profile-actions">
+          <a href="{% url 'order_history' %}" class="btn-shop">View Order History</a>
+          <a href="{% url 'address_book' %}" class="btn-shop" style="margin-left: 10px;">Address Book</a>
+        </div>
+
+        <div class="password-section">
+          <h3>Change Password</h3>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="msg msg-{{ message.tags|default:'info' }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          <form method="post" action="{% url 'profile' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password" />
+
+            {% if password_form.non_field_errors %}
+              <div class="form-errors">
+                {% for e in password_form.non_field_errors %}
+                  <div>{{ e }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="form-row">
+              <label for="{{ password_form.old_password.id_for_label }}">Current password</label>
+              {{ password_form.old_password }}
+              {% for e in password_form.old_password.errors %}
+                <div class="field-error">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-row">
+              <label for="{{ password_form.new_password1.id_for_label }}">New password</label>
+              {{ password_form.new_password1 }}
+              {% for e in password_form.new_password1.errors %}
+                <div class="field-error">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-row">
+              <label for="{{ password_form.new_password2.id_for_label }}">Confirm new password</label>
+              {{ password_form.new_password2 }}
+              {% for e in password_form.new_password2.errors %}
+                <div class="field-error">{{ e }}</div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-shop" style="margin-top: 8px;">Update Password</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <h3>Shipping Addresses</h3>
+
+        {% if shipping_addresses %}
+          <div class="address-list">
+            {% for address in shipping_addresses %}
+              <div class="address-item {% if address.is_default %}is-default{% endif %}">
+                <div class="address-item-header">
+                  <div class="address-person">{{ address.first_name }} {{ address.last_name }}</div>
+                  {% if address.is_default %}
+                    <div class="address-badge">Default</div>
+                  {% endif %}
+                </div>
+
+                <div class="address-line">
+                  {{ address.address_line_1 }}{% if address.address_line_2 %}
+                    , {{ address.address_line_2 }}
+                  {% endif %}
+                </div>
+                <div class="address-line">{{ address.city }}, {{ address.state }} {{ address.postal_code }}</div>
+                <div class="address-line">Phone: {{ address.phone_number }}</div>
+
+                {% if not address.is_default %}
+                  <form action="{% url 'set_default_address' address.id %}" method="post" class="set-default-form">
+                    {% csrf_token %}
+                    <button type="submit" class="set-default-btn">Set as default</button>
+                  </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-title">No saved addresses yet</div>
+            <div class="empty-text">Addresses are added during checkout.</div>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock %}

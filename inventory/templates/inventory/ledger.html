@@ -35,7 +35,7 @@
             <tr>
               <td class="sub-text" style="white-space: nowrap;">
                 {{ entry.date_created|date:'d M Y' }}<br />
-                <small>{{ entry.date_created|date:'H:i' }}</small>
+                <small>{{ entry.date_created|date:'h:i A' }}</small>
               </td>
               <td>
                 <strong>{{ entry.variant.sku }}</strong><br />
@@ -45,17 +45,9 @@
                 <span class="status-badge status-{{ entry.transaction_type }}">{{ entry.get_transaction_type_display }}</span>
               </td>
               <td style="font-weight: bold; font-size: 1rem; color: {% if entry.quantity_changed > 0 %}
-                  
-                  
                   #2f855a
-
-
                 {% else %}
-                  
-                  
                   #c53030
-
-
                 {% endif %};">
                 {% if entry.quantity_changed > 0 %}+{% endif %}{{ entry.quantity_changed }}
               </td>

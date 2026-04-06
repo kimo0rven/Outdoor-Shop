@@ -1,6 +1,43 @@
-{% extends 'master.html' %} {% load static %} {% block extra_css %}
+{% extends 'master.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/listings.css' %}" />
-{% endblock %} {% block content %}
+  <style>
+    .orders-search {
+      width: 260px;
+      max-width: 100%;
+    }
+    
+    .dt-cell .dt-date {
+      font-weight: 600;
+      color: #353d47;
+      display: block;
+      white-space: nowrap;
+    }
+    .dt-cell .dt-time {
+      color: #718096;
+      font-size: 12px;
+      display: block;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    
+    .no-match {
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
   <div>
     <div class="main-container">
       <div class="table-header">
@@ -9,7 +46,7 @@
         <div class="table-actions">
           <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="order-search" class="search-input" placeholder="Search Order ID..." />
+            <input type="text" id="order-search" class="search-input orders-search" placeholder="Search #, status, source, cashier, total..." />
           </div>
         </div>
       </div>
@@ -29,17 +66,20 @@
           </thead>
           <tbody>
             {% for order in orders %}
-              <tr>
+              <tr class="order-row" data-search="{{ order.id }} {{ order.status }} {{ order.order_source }} {% if order.processed_by %}{{ order.processed_by.username }}{% endif %} {% if order.user %}{{ order.user.username }}{% endif %} {{ order.total_amount }}">
                 <td>
                   <span class="name-text" style="font-weight: bold">#{{ order.id }}</span>
                 </td>
 
                 <td>
-                  <span class="sub-text">{{ order.created_at|date:'M d, Y h:i A' }}</span>
+                  <span class="sub-text dt-cell">
+                    <span class="dt-date">{{ order.order_date|date:'M d, Y' }}</span>
+                    <span class="dt-time">{{ order.order_date|date:'h:i A' }}</span>
+                  </span>
                 </td>
 
                 <td>
-                  <span class="attr-tag" style="font-size: 0.8rem">{{ order.order_source }}</span>
+                  <span class="attr-tag" style="font-size: 0.8rem">{{ order.get_order_source_display }}</span>
                 </td>
 
                 <td>
@@ -56,20 +96,21 @@
                   <span class="sub-text">
                     {% if order.processed_by %}
                       {{ order.processed_by.username }}
-                    {% elif order.user %}
-                      {{ order.user.username }}
                     {% else %}
-                      Guest
+                      Not Yet Processed
                     {% endif %}
                   </span>
                 </td>
 
                 <td>
-                  <span class="name-text" style="font-weight: bold; color: #2ab6d4">₱{{ order.total_amount }}</span>
+                  <span class="name-text" style="font-weight: bold; color: #2ab6d4">₱{{ order.total_amount|floatformat:2|intcomma }}</span>
                 </td>
 
                 <td style="text-align: center">
-                  <button class="btn btn-cancel" style="padding: 4px 10px; font-size: 0.85rem">View Details</button>
+                  <a href="{% url 'sales:sales_order_detail' order.id %}" class="btn btn-cancel view-link" style="padding: 4px 10px; font-size: 0.85rem">
+                    View Details
+                    <span aria-hidden="true">→</span>
+                  </a>
                 </td>
               </tr>
             {% empty %}
@@ -77,9 +118,44 @@
                 <td colspan="7" class="no-result">No orders have been placed yet.</td>
               </tr>
             {% endfor %}
+            <tr id="noSearchResultsRow" style="display: none;">
+              <td colspan="7" class="no-result">No matching orders.</td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    ;(function () {
+      const input = document.getElementById('order-search')
+      const rows = Array.from(document.querySelectorAll('.order-row'))
+      const emptyRow = document.getElementById('noSearchResultsRow')
+    
+      if (!input || rows.length === 0) return
+    
+      function normalize(s) {
+        return (s || '').toString().toLowerCase().trim()
+      }
+    
+      function applyFilter() {
+        const q = normalize(input.value)
+        let visible = 0
+    
+        rows.forEach((row) => {
+          const hay = normalize(row.dataset.search)
+          const match = q.length === 0 || hay.includes(q)
+          row.style.display = match ? '' : 'none'
+          if (match) visible++
+        })
+    
+        if (emptyRow) emptyRow.style.display = visible === 0 ? '' : 'none'
+      }
+    
+      input.addEventListener('input', applyFilter)
+    })()
+  </script>
 {% endblock %}

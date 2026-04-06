@@ -20,83 +20,170 @@
     <div class="app-container">
       <header class="main-header">
         <div class="header-container">
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-expanded="false">
+            <span></span>
+          </button>
           <div class="logo">
             <a href="/">Aginod</a>
           </div>
           <nav class="main-nav">
             <ul>
               <li>
-                <a href="#">Featured</a>
+                <a href="{% url 'all_products' %}">All Products</a>
               </li>
               <li>
-                <a href="#">Men's</a>
+                <a href="{% url 'all_products' %}?gender=mens&sort=newest">Men's</a>
               </li>
               <li>
-                <a href="#">Women's</a>
+                <a href="{% url 'all_products' %}?gender=womens&sort=newest">Women's</a>
               </li>
               <li>
-                <a href="#">Kids'</a>
-              </li>
-              <li>
-                <a href="#">Packs & Gear</a>
-              </li>
-              <li>
-                <a href="#">Food & Beer</a>
-              </li>
-              <li>
-                <a href="#">Sports</a>
+                <a href="{% url 'all_products' %}?gender=kids&sort=newest">Kids</a>
               </li>
             </ul>
           </nav>
           <div class="header-actions">
             <div class="search-container" id="search-trigger">
-              <span class="search-icon" style="left:30px"></span>
+              <span class="search-icon"></span>
               <input type="search" class="search-input" placeholder="Search" readonly />
             </div>
 
             <div class="search-overlay" id="search-overlay">
               <div class="search-overlay-content">
                 <div class="search-overlay-header">
-                  <div class="search-overlay-input-group">
-                    <span class="search-icon" style="position: absolute; left: 15px; top: 15px;"></span>
-                    <input type="search" id="expanded-search-input" />
-                  </div>
+                  <form action="{% url 'search_products' %}" method="GET" class="search-overlay-input-group" style="flex: 1; display: flex; position: relative;">
+                    <span class="search-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%);">🔍</span>
+
+                    <input type="search" name="q" id="expanded-search-input" placeholder="Search products, brands, or tags..." style="width: 100%; padding-left: 40px;" required />
+                  </form>
+
                   <button class="cancel-search-btn" id="cancel-search-btn">Cancel</button>
                 </div>
 
                 <div class="popular-searches">
                   <h3>Popular searches</h3>
-                  <ul>
-                    <li>
-                      <a href="#">Backpacking tents</a>
-                    </li>
-                    <li>
-                      <a href="#">Osprey daypacks</a>
-                    </li>
-                    <li>
-                      <a href="#">Waterproof hiking boots</a>
-                    </li>
-                  </ul>
+                  {% if popular_search_terms %}
+                    <ul>
+                      {% for t in popular_search_terms %}
+                        <li>
+                          <a href="{% url 'search_products' %}?q={{ t.term|urlencode }}">{{ t.term }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <p class="popular-searches-empty">Search the catalog to build trending terms here.</p>
+                  {% endif %}
                 </div>
               </div>
             </div>
 
-            <div class="icon-links">
-              <a href="#"><i class="material-icons">&#xe7fd;</i></a>
-              <a href="#"><i class="material-icons">&#xe8cc;</i></a>
+            <div class="icon-links" style="display: flex; align-items: center; gap: 15px;">
+              <div class="user-menu-wrapper">
+                {% if request.user.is_authenticated %}
+                  <a href="#" title="My Account" class="profile-icon"><i class="material-icons">&#xe7fd;</i></a>
+
+                  <div class="dropdown-content">
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'order_history' %}">Order History</a>
+                    <a href="{% url 'address_book' %}">Address Book</a>
+                    <a href="{% url 'logout' %}" style="color: #d9534f; font-weight: 500;">Log Out</a>
+                  </div>
+                {% else %}
+                  <a href="{% url 'login' %}" title="Login / Register"><i class="material-icons">&#xe7fd;</i></a>
+                {% endif %}
+              </div>
+
+              <a href="{% url 'cart_detail' %}" title="View Cart" style="position: relative; display: inline-block;">
+                <i class="material-icons">&#xe8cc;</i>
+
+                {% if cart|length > 0 %}
+                  <span style="position: absolute; top: -8px; right: -12px; background-color: #d9534f; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;">{{ cart|length }}</span>
+                {% endif %}
+              </a>
             </div>
           </div>
         </div>
       </header>
 
       <div class="main-wrapper">
-        {% comment %} <main class="content">
-          {% endcomment %}
+        
           {% block content %}
+            <div class="message-container" style="max-width: 1200px; margin: 20px auto; padding: 0 40px;">
+              {% if messages %}
+                {% for message in messages %}
+                  <div style="padding: 10px; margin-bottom: 10px; border-radius: 4px; text-align: center; 
+                {% if message.tags == 'error' %}
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                       background-color: #f8d7da; color: #721c24;
 
+
+
+
+
+
+
+
+
+
+                    {% elif message.tags == 'success' %}
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                       background-color: #d4edda; color: #155724;
+
+
+
+
+
+
+
+
+
+
+                    {% else %}
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      
+                      background-color: #e2e3e5; color: #383d41;
+
+
+
+
+
+
+
+
+
+
+                    {% endif %}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
           {% endblock %}
-          {% comment %}
-        </main> {% endcomment %}
+          
 
         <footer class="site-footer">
           <div class="footer-top">
@@ -170,6 +257,33 @@
     </div>
 
     <script src="{% static 'OutdoorShop/js/search_bar.js' %}"></script>
+    <script>
+      (function () {
+        const header = document.querySelector('.main-header');
+        const btn = document.getElementById('mobileMenuToggle');
+        if (!header || !btn) return;
+
+        function closeMenu() {
+          header.classList.remove('menu-open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+
+        btn.addEventListener('click', function () {
+          const isOpen = header.classList.toggle('menu-open');
+          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Close when clicking a nav link (mobile)
+        header.querySelectorAll('.main-nav a').forEach((a) => {
+          a.addEventListener('click', closeMenu);
+        });
+
+        // Close if resizing back to desktop
+        window.addEventListener('resize', function () {
+          if (window.innerWidth > 768) closeMenu();
+        });
+      })();
+    </script>
     {% block extra_js %}
 
     {% endblock %}

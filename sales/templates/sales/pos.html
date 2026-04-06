@@ -1,52 +1,118 @@
 {% extends 'master.html' %}
 {% load static %}
+
 {% block title %}
   POS | Staff - Aginod Outdoor Shop
 {% endblock %}
+
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'sales/css/pos.css' %}" />
+  <link rel="stylesheet" href="{% static 'sales/css/pos.css' %}?v=6" />
 {% endblock %}
 
 {% block content %}
-  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
-  <div id="pos-data" data-checkout-url="{% url 'sales:pos_checkout' %}"></div>
+  <div class="pos-page">
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}" />
 
-  <div class="pos-container">
-    <div class="product-side">
-      <div style="position: relative">
-        <input type="text" id="pos-search-input" class="search-bar-input" placeholder="🔍 Scan SKU or Search Gear Name..." />
-        <div id="search-results-container" class="search-results" style="display: none"></div>
-      </div>
+    <div id="pos-data" data-checkout-url="{% url 'sales:pos_checkout' %}" data-search-url="{% url 'sales:pos_search' %}" data-variants-url="{% url 'sales:pos_get_variants' 0 %}"></div>
 
-      <div class="dashboard-section">
-        <div class="category-tabs">
-          <button class="cat-tab active" onclick="filterCategory('all')">All</button>
-          {% for cat in categories %}
-            <button class="cat-tab" onclick="filterCategory('cat-{{ cat.id }}')">{{ cat.category_name }}</button>
-          {% endfor %}
+    <div class="pos-container">
+      <div class="product-side">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="pos-search-input" class="search-bar-input" placeholder="Scan SKU or Search Gear Name..." />
         </div>
 
-        <div class="quick-items-grid" id="quick-items-grid"></div>
-      </div>
-    </div>
-
-    <div class="cart-side">
-      <h3>Current Order</h3>
-      <div id="cart-list" class="cart-list">
-        <p id="empty-msg" class="cart-list-empty-msg">Cart is empty</p>
-      </div>
-
-      <div class="cart-total-line">
-        <div class="cart-total">
-          <span>Total</span>
-          <span id="cart-total">₱0.00</span>
+        <div class="filters-container">
+          <div class="filter-row">
+            <button class="filter-tab active" data-type="category" data-val="all">All Categories</button>
+            {% for cat in categories %}
+              <button class="filter-tab" data-type="category" data-val="cat-{{ cat.id }}">{{ cat.category_name }}</button>
+            {% endfor %}
+          </div>
         </div>
-        <button id="checkout-btn" class="btn-save cart-checkout-btn" disabled>Checkout</button>
+
+        <div class="dashboard-section">
+          <div class="quick-items-grid" id="quick-items-grid">
+            {% for listing in listings %}
+              <div class="pos-item-card"
+                data-category="cat-{{ listing.category.id }}"
+                data-name="{{ listing.name|lower }}"
+                data-image="{% if listing.thumbnail %}
+                  {{ listing.thumbnail.url }}
+                {% else %}
+                  
+                none
+
+                {% endif %}"
+                onclick="openVariantModal({{ listing.id }}, '{{ listing.name|escapejs }}', this.getAttribute('data-image').trim())">
+                <div class="pos-item-img">
+                  {% if listing.thumbnail %}
+                    <img src="{{ listing.thumbnail.url }}" alt="{{ listing.name }}" />
+                  {% else %}
+                    <span class="no-img">No Img</span>
+                  {% endif %}
+                </div>
+
+                <div class="pos-item-details">
+                  <div class="pos-item-name">{{ listing.name }}</div>
+                  <div class="pos-item-bottom">
+                    <span class="pos-item-stock">Select Options ➔</span>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="empty-inventory-msg">No products found in inventory.</div>
+            {% endfor %}
+          </div>
+
+          <div id="variant-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 id="modal-product-name">Product Name</h3>
+                <button class="close-btn" onclick="closeVariantModal()">✕</button>
+              </div>
+              <div class="modal-body" id="modal-variants-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-side">
+        <div class="cart-header">
+          <h3>Detail Transaction</h3>
+          <button id="clear-cart-btn" class="btn-reset-order" onclick="clearCart()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>Reset Order
+          </button>
+        </div>
+
+        <div id="cart-list" class="cart-list">
+          <div id="empty-msg" class="cart-list-empty-msg">
+            <div style="font-size: 30px; margin-bottom: 10px;">🛒</div>Cart is empty. Tap items to add.
+          </div>
+        </div>
+
+        <div class="cart-footer">
+          <div class="summary-box">
+            <div class="summary-line">
+              <span class="summary-label">Sub-Total</span>
+              <span class="summary-val" id="summary-subtotal">₱0.00</span>
+            </div>
+            <div class="summary-line total-line">
+              <span class="summary-label">Total Payment</span>
+              <span class="summary-val" id="cart-total">₱0.00</span>
+            </div>
+          </div>
+
+          <button id="checkout-btn" class="btn-checkout" onclick="processCheckout()" disabled>Check Out</button>
+        </div>
       </div>
     </div>
   </div>
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'sales/js/pos.js' %}"></script>
+  <script src="{% static 'sales/js/pos.js' %}?v=8"></script>
 {% endblock %}

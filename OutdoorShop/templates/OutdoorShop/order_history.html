@@ -1,0 +1,119 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/order_history.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="orders-container">
+    <div class="history-header">
+      <h2>My Order History</h2>
+      <p class="sub-text">Keep track of your gear and upcoming adventures.</p>
+    </div>
+
+    <div class="orders-list">
+      {% for order in orders %}
+        <div class="order-card">
+          <div class="order-header">
+            <div class="header-left">
+              <span class="order-source-tag {{ order.order_source|lower }}">{{ order.get_order_source_display }}</span>
+              <span class="order-id">Order #{{ order.id }}</span>
+            </div>
+            <div class="header-right">
+              <span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span>
+            </div>
+          </div>
+
+          <div class="order-body">
+            {% for item in order.items.all %}
+              <div class="order-item">
+                <div class="item-img-wrapper">
+                  {% if item.listing_variant.listing.thumbnail %}
+                    <img src="{{ item.listing_variant.listing.thumbnail.url }}" alt="Product" class="item-img" />
+                  {% else %}
+                    <div class="item-img-placeholder">No Img</div>
+                  {% endif %}
+                </div>
+
+                <div class="item-details">
+                  <h4 class="item-title">{{ item.listing_variant.listing.brand|default:'' }} {{ item.listing_variant.listing.name }}</h4>
+                  <div class="item-meta">
+                    <span class="item-variant">
+                      {% for attr in item.listing_variant.attributes.all %}
+                        {{ attr.value }}{% if not forloop.last %} / {% endif %}
+                      {% empty %}
+                        {{ item.listing_variant.variant_name }}
+                      {% endfor %}
+                    </span>
+                    <span class="item-qty">x{{ item.quantity }}</span>
+                  </div>
+                </div>
+
+                <div class="item-price">₱{{ item.price|intcomma }}</div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="order-footer">
+            <div class="footer-info">
+              <span class="order-date">Placed on {{ order.order_date|date:'M d, Y h:i A' }}</span>
+              {% if order.tracking_number %}
+                <span class="tracking-num">Tracking: <strong>{{ order.tracking_number }}</strong></span>
+              {% endif %}
+            </div>
+
+            <div class="footer-total">
+              <span class="label">Order Total:</span>
+              <span class="total-amount">₱{{ order.total_amount|intcomma }}</span>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            {% if order.status == 'shipped' %}
+              <button class="btn-action primary" onclick="updateOrderStatus({{ order.id }}, 'delivered')">Confirm Receipt</button>
+            {% elif order.status == 'delivered' %}
+              <button class="btn-action outline">Buy Again</button>
+            {% elif order.status == 'pending' or order.status == 'processing' %}
+              <button class="btn-action danger" onclick="updateOrderStatus({{ order.id }}, 'cancelled')">Cancel Order</button>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-orders">
+          <h3>No orders found</h3>
+          <p>Looks like you haven't gear up yet.</p>
+          <a href="{% url 'all_products' %}" class="btn-shop">Start Shopping</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    function updateOrderStatus(orderId, newStatus) {
+      let confirmMessage = newStatus === 'cancelled' ? 'Are you sure you want to cancel this order?' : 'Have you safely received your items?'
+    
+      if (confirm(confirmMessage)) {
+        fetch(`/order/${orderId}/update-status/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ status: newStatus })
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              window.location.reload()
+            } else {
+              alert(data.message)
+            }
+          })
+      }
+    }
+  </script>
+{% endblock %}

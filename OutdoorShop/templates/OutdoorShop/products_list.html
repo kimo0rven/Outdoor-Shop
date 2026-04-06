@@ -1,0 +1,271 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/catalog.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <form id="filter-form" method="GET" action="{{ request.path }}">
+    {% if search_query %}
+      <input type="hidden" name="q" value="{{ search_query }}" />
+    {% endif %}
+
+    <div class="catalog-page-container">
+      <aside class="catalog-sidebar">
+        <div class="filter-header">
+          <span class="filter-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"></path>
+            </svg>
+          </span>
+          <span>Filter</span>
+          <button type="button" class="mobile-filter-close" onclick="closeMobileFilters()" aria-label="Close filters">×</button>
+          <a href="{{ request.path }}" class="clear-all-link">Clear All</a>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title accordion-toggle">
+            Category <span class="chevron">⌄</span>
+          </div>
+          <div class="filter-options accordion-content">
+            {% for cat in categories %}
+              {% if cat.id in selected_categories %}
+                <label>
+                  <input type="checkbox" name="category" value="{{ cat.id }}" onchange="this.form.submit()" checked />
+                  {{ cat.category_name }}
+                </label>
+              {% else %}
+                <label>
+                  <input type="checkbox" name="category" value="{{ cat.id }}" onchange="this.form.submit()" />
+                  {{ cat.category_name }}
+                </label>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title accordion-toggle">
+            Gender <span class="chevron">⌄</span>
+          </div>
+          <div class="filter-options accordion-content">
+            {% if 'mens' in selected_genders %}
+              <label><input type="checkbox" name="gender" value="mens" onchange="this.form.submit()" checked />Men's</label>
+            {% else %}
+              <label><input type="checkbox" name="gender" value="mens" onchange="this.form.submit()" />Men's</label>
+            {% endif %}
+
+            {% if 'womens' in selected_genders %}
+              <label><input type="checkbox" name="gender" value="womens" onchange="this.form.submit()" checked />Women's</label>
+            {% else %}
+              <label><input type="checkbox" name="gender" value="womens" onchange="this.form.submit()" />Women's</label>
+            {% endif %}
+
+            {% if 'unisex' in selected_genders %}
+              <label><input type="checkbox" name="gender" value="unisex" onchange="this.form.submit()" checked />Unisex</label>
+            {% else %}
+              <label><input type="checkbox" name="gender" value="unisex" onchange="this.form.submit()" />Unisex</label>
+            {% endif %}
+
+            {% if 'kids' in selected_genders %}
+              <label><input type="checkbox" name="gender" value="kids" onchange="this.form.submit()" checked />Kids</label>
+            {% else %}
+              <label><input type="checkbox" name="gender" value="kids" onchange="this.form.submit()" />Kids</label>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title accordion-toggle">
+            Activities <span class="chevron">⌄</span>
+          </div>
+          <div class="filter-options accordion-content">
+            {% for act in activities %}
+              {% if act.id in selected_activities %}
+                <label>
+                  <input type="checkbox" name="activity" value="{{ act.id }}" onchange="this.form.submit()" checked />
+                  {{ act.activity_name }}
+                </label>
+              {% else %}
+                <label>
+                  <input type="checkbox" name="activity" value="{{ act.id }}" onchange="this.form.submit()" />
+                  {{ act.activity_name }}
+                </label>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title accordion-toggle">
+            Brands <span class="chevron">⌄</span>
+          </div>
+          <div class="filter-options accordion-content">
+            {% for brand in brands %}
+              {% if brand in selected_brands %}
+                <label>
+                  <input type="checkbox" name="brand" value="{{ brand }}" onchange="this.form.submit()" checked />
+                  {{ brand }}
+                </label>
+              {% else %}
+                <label>
+                  <input type="checkbox" name="brand" value="{{ brand }}" onchange="this.form.submit()" />
+                  {{ brand }}
+                </label>
+              {% endif %}
+            {% empty %}
+              <span class="no-brands-text">No brands available</span>
+            {% endfor %}
+          </div>
+        </div>
+      </aside>
+
+      <main class="catalog-main">
+        <div class="catalog-header">
+          
+          <div class="catalog-header-row">
+            <button type="button" class="mobile-filter-btn" id="mobileFilterBtn" onclick="toggleMobileFilters()">
+              <span class="filter-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"></path>
+                </svg>
+              </span>
+              Filter
+            </button>
+
+            <p class="product-count">{{ products|length }} product{{ products|length|pluralize }}</p>
+          </div>
+
+          <div class="sort-container">
+            <select class="sort-dropdown" name="sort" onchange="this.form.submit()">
+              {% if current_sort == 'newest' %}
+                <option value="newest" selected>Newest</option>
+              {% else %}
+                <option value="newest">Newest</option>
+              {% endif %}
+
+              {% if current_sort == 'bestseller' %}
+                <option value="bestseller" selected>Bestseller</option>
+              {% else %}
+                <option value="bestseller">Bestseller</option>
+              {% endif %}
+
+              {% if current_sort == 'lowest_price' %}
+                <option value="lowest_price" selected>Lowest Price</option>
+              {% else %}
+                <option value="lowest_price">Lowest Price</option>
+              {% endif %}
+
+              {% if current_sort == 'highest_price' %}
+                <option value="highest_price" selected>Highest Price</option>
+              {% else %}
+                <option value="highest_price">Highest Price</option>
+              {% endif %}
+
+              {% if current_sort == 'older' %}
+                <option value="older" selected>Oldest</option>
+              {% else %}
+                <option value="older">Oldest</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid">
+          {% for product in products %}
+            <a href="{% url 'product_detail' product.id %}" class="product-card">
+              <div class="card-image-wrapper">
+                {% if product.is_new %}
+                  <span class="badge badge-new">New in</span>
+                {% endif %}
+
+                {% with first_variant=product.variants.all.0 %}
+                  {% if first_variant and first_variant.thumbnail %}
+                    <img src="{{ first_variant.thumbnail.url }}" alt="{{ product.name }}" class="product-img" />
+                  {% elif product.thumbnail %}
+                    <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="product-img" />
+                  {% else %}
+                    <div class="placeholder-img" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 12px; background: #f8f8f8;">No Image</div>
+                  {% endif %}
+                {% endwith %}
+              </div>
+              <div class="card-details">
+                <p class="brand-name">{{ product.brand|default:'Outdoor Brand' }}</p>
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-price">₱{{ product.base_price|default:'0.00'|intcomma }} PHP</p>
+              </div>
+            </a>
+          {% empty %}
+            <div class="empty-state">
+              <h3>No products found.</h3>
+              <p>Try adjusting your search or filters to find what you're looking for.</p>
+            </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+  </form>
+
+  {% block extra_js %}
+    <script>
+      (function () {
+        const sidebar = document.querySelector('.catalog-sidebar')
+        let overlay = document.querySelector('.filter-overlay')
+
+        function ensureOverlay() {
+          if (overlay) return overlay
+          overlay = document.createElement('div')
+          overlay.className = 'filter-overlay'
+          document.body.appendChild(overlay)
+          overlay.addEventListener('click', closeFilters)
+          return overlay
+        }
+
+        function openFilters() {
+          if (!sidebar) return
+          ensureOverlay()
+          document.body.classList.add('filters-open')
+        }
+
+        function closeFilters() {
+          document.body.classList.remove('filters-open')
+        }
+
+        window.toggleMobileFilters = function () {
+          if (document.body.classList.contains('filters-open')) closeFilters()
+          else openFilters()
+        }
+
+        window.closeMobileFilters = function () {
+          closeFilters()
+        }
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeFilters()
+        })
+
+        const accordions = document.querySelectorAll('.accordion-toggle')
+      
+        accordions.forEach((acc) => {
+          acc.addEventListener('click', function () {
+            this.classList.toggle('collapsed')
+      
+            const content = this.nextElementSibling
+            if (content && content.classList.contains('accordion-content')) {
+              content.classList.toggle('collapsed')
+            }
+          })
+        })
+      
+        const sortDropdown = document.querySelector('.sort-dropdown')
+        if (sortDropdown) {
+          sortDropdown.addEventListener('change', function () {
+            this.form.submit()
+          })
+        }
+      })()
+    </script>
+  {% endblock %}
+{% endblock %}

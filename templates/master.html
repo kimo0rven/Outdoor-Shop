@@ -10,6 +10,8 @@
       {% endblock %}
     </title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     {% block extra_css %}
 
     {% endblock %}
@@ -20,7 +22,7 @@
         <span id="toggle-btn" class="toggle-btn">☰</span>
         <h2>INVENTORY</h2>
       </div>
-      <div>Admin Profile</div>
+      <div>Hello</div>
     </header>
 
     <div class="app-container">
@@ -58,18 +60,8 @@
             <a href="{% url 'ledger' %}">📄 <span>Ledger</span></a>
           </li>
 
-          {% comment %}
-          <li class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">
-            <a href="{% url 'reports' %}">📄 <span>Reports</span></a>
-          </li>
-          {% endcomment %} {% comment %}
-          <li class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
-            <a href="{% url 'settings' %}">👤 <span>Settings</span></a>
-          </li>
-          {% endcomment %}
-
           <li class="logout-item">
-            <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none">
+            <form id="logout-form" action="{% url 'staff_logout' %}" method="POST" style="display: none">
               {% csrf_token %}
             </form>
             <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit()"><span>🚪</span> <span>Logout</span></a>
@@ -79,142 +71,17 @@
 
       <div class="main-wrapper">
         <main class="content">
-          {% if messages %}
-            <div class="messages-container" style="margin-bottom: 20px">
-              {% for message in messages %}
-                <div class="alert"
-                  style="padding: 12px 20px; border-radius: 6px; margin-bottom: 10px; border: 1px solid;{% if message.tags == 'error' %}
-                    
-                    
-                    
-                    
-                    
-                    background-color: #fff5f5; color: #c53030; border-color: #feb2b2;
-
-
-
-
-
-                  {% elif message.tags == 'warning' %}
-                    
-                    
-                    
-                    
-                    
-                    background-color: #fffaf0; color: #9c4221; border-color: #feebc8;
-
-
-
-
-
-                  {% else %}
-                    
-                    
-                    
-                    
-                    
-                    background-color: #f0fff4; color: #2f855a; border-color: #9ae6b4; 
-
-
-
-
-
-
-
-
-
-                  {% endif %}">{{ message }}</div>
-              {% endfor %}
-            </div>
-          {% endif %} {% block content %}
+          {% block content %}
 
           {% endblock %}
         </main>
-
-        <footer class="site-footer">
-          <div class="footer-top">
-            <div class="footer-badge">
-              <div class="guarantee-box">
-                <strong>ALL MIGHTY<br />GUARANTEE</strong>
-                <span class="guarantee-sub">ANY REASON.<br />ANY PRODUCT.<br />ANY ERA.</span>
-              </div>
-            </div>
-
-            <div class="footer-nav">
-              <div class="footer-column">
-                <h3>COMPANY</h3>
-                <ul>
-                  <li>
-                    <a href="#">About Us</a>
-                  </li>
-                  <li>
-                    <a href="#">History</a>
-                  </li>
-                  <li>
-                    <a href="#">Sustainability</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="footer-column">
-                <h3>CUSTOMER SUPPORT</h3>
-                <ul>
-                  <li>
-                    <a href="#">Customer Support Center</a>
-                  </li>
-                  <li>
-                    <a href="#">Knowledge Base</a>
-                  </li>
-                  <li>
-                    <a href="#">Size and Fit</a>
-                  </li>
-                </ul>
-              </div>
-
-              <div class="footer-column">
-                <h3>RESOURCES</h3>
-                <ul>
-                  <li>
-                    <a href="#">Rewards</a>
-                  </li>
-                  <li>
-                    <a href="#">Affiliate Program</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="footer-social">
-              <h3>STAY IN TOUCH!</h3>
-              <div class="social-icons">
-                <a href="#" aria-label="Instagram">IG</a>
-                <a href="#" aria-label="Facebook">FB</a>
-                <a href="#" aria-label="X">X</a>
-                <a href="#" aria-label="YouTube">YT</a>
-                <a href="#" aria-label="Pinterest">PI</a>
-                <a href="#" aria-label="TikTok">TK</a>
-              </div>
-              <div class="region-selector">
-                <span class="flag">🇺🇸</span> US | EN
-              </div>
-            </div>
-          </div>
-
-          <div class="footer-illustration"></div>
-
-          <div class="footer-bottom">
-            <div class="legal-text">
-              © 2026 Aginod. All prices are in USD. <a href="#">Terms & Privacy</a> & <a href="#">California Supply Chain Act/UK Modern Slavery Act Statement</a>
-            </div>
-            <div class="cookie-prefs">
-              <a href="#">Cookie Preferences</a>
-            </div>
-          </div>
-        </footer>
       </div>
     </div>
 
     <script src="{% static 'inventory/js/sidebar.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {% block extra_js %}
 
     {% endblock %}

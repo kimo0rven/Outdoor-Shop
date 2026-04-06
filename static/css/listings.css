@@ -95,7 +95,7 @@
     min-width: 75px;
 }
 
-/* Status Colors */
+
 .status-active { background-color: #2ab6d4; }
 .status-draft { background-color: #f39c12; }
 .status-inactive { background-color: #e74c3c; }
@@ -112,7 +112,7 @@
 .status-adjustment { background-color: #2ab6d4; }
 .status-return { background-color: #805ad5; }
 
-/* --- Sliding Side Panel --- */
+
 .side-panel {
     position: fixed;
     top: 0;
@@ -142,7 +142,7 @@
 .header-left h4 { margin: 0; font-size: 1.1rem; color: #4a5568; font-weight: 500; }
 .header-right { display: flex; gap: 10px; }
 
-/* --- Buttons --- */
+
 .btn { 
     padding: 8px 16px; 
     border-radius: 4px; 
@@ -182,7 +182,7 @@
     transform: translateY(1px);
 }
 
-/* --- Forms --- */
+
 .panel-body { padding: 25px 20px; overflow-y: auto; flex: 1; }
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; font-size: 0.9rem; color: #4a5568; margin-bottom: 8px; font-weight: 500; }

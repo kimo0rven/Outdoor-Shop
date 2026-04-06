@@ -1,0 +1,297 @@
+.checkout-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  width: 100%;
+}
+.checkout-steps {
+  flex: 1.5;
+  min-width: 300px;
+}
+.checkout-summary {
+  flex: 1;
+  min-width: 300px;
+  position: sticky;
+  top: 20px;
+}
+
+.step-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 20px;
+  transition: opacity 0.3s;
+}
+.step-card.disabled-step {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.step-card.completed-step {
+  background: #fafafa;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.step-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  flex: 1;
+}
+.step-number {
+  background: #111;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+.completed-step .step-number {
+  background: #28a745;
+}
+.completed-step .step-number::after {
+  content: '✓';
+}
+
+.btn-black {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-black:hover {
+  background: #333;
+}
+.edit-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.custom-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+.form-group.full-width {
+  flex: 100%;
+}
+.form-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+.custom-form label {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+.custom-form input {
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+.custom-form input:focus {
+  border-color: #111;
+}
+.locked-input {
+  background-color: #f9f9f9;
+  color: #666;
+  cursor: not-allowed;
+  border-color: #e0e0e0;
+}
+
+.review-box {
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background-color: #fff;
+  margin-bottom: 30px;
+}
+.review-row {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+.review-row:last-child {
+  border-bottom: none;
+}
+.review-label {
+  width: 90px;
+  color: #666;
+  font-size: 13px;
+}
+.review-content {
+  flex: 1;
+  color: #111;
+  line-height: 1.4;
+}
+
+.delivery-options {
+  margin-top: 20px;
+}
+.delivery-title {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+.delivery-radio {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  border: 1px solid #111;
+  background-color: #fafafa;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.delivery-radio input[type='radio'] {
+  accent-color: #111;
+  transform: scale(1.2);
+}
+.radio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+.summary-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.summary-img {
+  width: 80px;
+  height: 80px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.summary-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.summary-details {
+  flex: 1;
+  font-size: 13px;
+}
+.summary-details strong {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+.attr-list {
+  color: #666;
+  margin-bottom: 5px;
+}
+.qty-price {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+.grand-total {
+  font-size: 18px;
+  font-weight: bold;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+  margin-top: 5px;
+}
+
+.sidebar-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 1000;
+  opacity: 0; visibility: hidden; transition: 0.3s ease;
+}
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+
+.address-sidebar {
+  position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
+  background: #fff; z-index: 1001; box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+  padding: 30px; transition: right 0.3s ease; overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.address-sidebar.active { right: 0; }
+
+.sidebar-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+}
+.sidebar-header h2 { font-size: 20px; font-weight: 600; margin: 0; }
+.close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #333; }
+
+
+.btn-outline {
+  width: 100%; background: #fff; border: 1px solid #ccc; padding: 12px;
+  border-radius: 40px; font-weight: 600; font-size: 14px; cursor: pointer;
+  transition: 0.2s;
+}
+.btn-outline:hover { border-color: #111; }
+
+
+.address-card {
+  display: flex; gap: 15px; border: 1px solid #ccc; padding: 20px;
+  border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: 0.2s;
+}
+.address-card.selected { border-color: #111; border-width: 1px; }
+.address-card input[type="radio"] { margin-top: 3px; accent-color: #111; transform: scale(1.1); }
+
+.address-details { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #333; }
+.address-details strong { font-size: 14px; color: #111; margin-bottom: 2px; }
+.edit-address-link { color: #111; text-decoration: underline; margin-top: 8px; font-size: 13px; font-weight: 500; }
+
+@media (max-width: 768px) {
+  .checkout-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .checkout-summary {
+    width: 100%;
+    position: static;
+  }
+}

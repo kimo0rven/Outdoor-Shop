@@ -1,0 +1,121 @@
+{% extends 'OutdoorShop/master.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'OutdoorShop/css/address_book.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="address-form-page">
+    <div class="address-form-card">
+      <h2>{{ page_title }}</h2>
+      <p class="sub-text">Fill out the shipping address details.</p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-errors">
+            {% for e in form.non_field_errors %}
+              <div>{{ e }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="address-form-flex">
+          <div class="grid-field">
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+            {% for e in form.first_name.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+            {% for e in form.last_name.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.phone_number.label_tag }}
+            {{ form.phone_number }}
+            {% for e in form.phone_number.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.address_type.label_tag }}
+            {{ form.address_type }}
+            {% for e in form.address_type.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.address_line_1.label_tag }}
+            {{ form.address_line_1 }}
+            {% for e in form.address_line_1.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.address_line_2.label_tag }}
+            {{ form.address_line_2 }}
+            {% for e in form.address_line_2.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.city.label_tag }}
+            {{ form.city }}
+            {% for e in form.city.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.state.label_tag }}
+            {{ form.state }}
+            {% for e in form.state.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.postal_code.label_tag }}
+            {{ form.postal_code }}
+            {% for e in form.postal_code.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field">
+            {{ form.country.label_tag }}
+            {{ form.country }}
+            {% for e in form.country.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="grid-field checkbox-field span-2">
+            {{ form.is_default }} {{ form.is_default.label_tag }}
+            {% for e in form.is_default.errors %}
+              <div class="field-error">{{ e }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-shop">{{ page_title }}</button>
+          <a href="{% url 'address_book' %}" class="btn-shop btn-shop-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

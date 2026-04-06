@@ -1,0 +1,311 @@
+.address-book-page {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.btn-shop {
+  display: inline-block;
+  text-decoration: none;
+  padding: 12px 24px;
+  background: #111;
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+  border: 0;
+  cursor: pointer;
+}
+
+.btn-shop:hover {
+  background: #333;
+}
+
+.address-book-header {
+  margin-bottom: 18px;
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.address-book-header h2 {
+  margin: 0 0 6px 0;
+}
+
+.address-book-list {
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.address-book-item {
+  border: 1px solid #eaeaea;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.address-book-item.is-default {
+  border-color: #bcd3ff;
+  box-shadow: 0 0 0 3px rgba(28, 99, 255, 0.08);
+}
+
+.address-book-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.address-book-name {
+  font-weight: 800;
+}
+
+.default-badge {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #1a4fff;
+  font-weight: 800;
+}
+
+.address-book-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.link-action {
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  border: none !important;
+}
+
+.link-action:hover {
+  border-bottom-color: #111;
+}
+
+.link-action-primary {
+  border-bottom: none;
+  padding: 8px 12px !important;
+  border-radius: 6px;
+  background: #111 !important;
+  color: #fff !important;
+}
+
+.link-action-primary:hover {
+  background: #333;
+  color: #fff;
+  border-bottom: none;
+}
+
+.link-action-secondary {
+  border-bottom: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #eaeaea !important;
+  color: #111 !important;
+}
+
+.link-action-secondary:hover {
+  background: #dedede;
+  color: #111;
+  border-bottom: none;
+}
+
+.link-action-danger {
+  border-bottom: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #d9534f !important;
+  color: #fff !important;
+}
+
+.link-action-danger:hover {
+  background: #c9302c;
+  color: #fff;
+  border-bottom: none;
+}
+
+.inline-form {
+  display: inline;
+}
+
+.inline-form .link-action-primary {
+  cursor: pointer;
+}
+
+.address-book-line {
+  color: #222;
+  margin: 4px 0;
+}
+
+.address-type {
+  color: #666;
+  margin-top: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 28px 14px;
+  background: #f8f9fa;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
+.empty-title {
+  margin: 0 0 6px 0;
+  font-weight: 900;
+}
+
+.empty-text {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.address-form-page {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.address-form-card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.address-form-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.grid-field {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.address-form-flex .grid-field {
+  flex: 0 0 calc(50% - 6px);
+  min-width: 260px;
+}
+
+.grid-field input,
+.grid-field select,
+.grid-field textarea {
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  outline: none;
+}
+
+.grid-field input:focus,
+.grid-field select:focus,
+.grid-field textarea:focus {
+  border-color: #bcd3ff;
+  box-shadow: 0 0 0 3px rgba(28, 99, 255, 0.12);
+}
+
+.span-2 {
+  flex: 0 0 100%;
+}
+
+.form-field {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  outline: none;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #bcd3ff;
+  box-shadow: 0 0 0 3px rgba(28, 99, 255, 0.12);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  align-items: center;
+}
+
+.btn-shop-secondary {
+  background: #eaeaea;
+  color: #111;
+}
+
+.btn-shop-secondary:hover {
+  background: #dedede;
+}
+
+.form-errors {
+  background: #fff1f0;
+  color: #8a1f1f;
+  border: 1px solid #ffd6d1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.checkbox-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-field input[type="checkbox"] {
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+}
+
+.checkbox-field label {
+  margin: 0;
+}
+
+.field-error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+@media (max-width: 850px) {
+  .address-book-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .address-form-flex .grid-field {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+}
+

@@ -40,7 +40,7 @@
           {% for listing in listings %}
             <tr>
               <td class="action-icon">
-                <span class="edit-listing-btn" title="Edit" style="cursor: pointer" data-id="{{ listing.id }}" data-brand="{{ listing.brand|default:'' }}" data-name="{{ listing.name }}" data-category="{{ listing.category.id }}" data-activity="{{ listing.activity.id|default:'' }}" data-vendor="{{ listing.vendor|default:'' }}" data-price="{{ listing.base_price|default:'' }}" data-mpn="{{ listing.model_number|default:'' }}" data-tags="{{ listing.tags|default:'' }}" data-status="{{ listing.listing_status }}" data-desc="{{ listing.description|default:'' }}" data-image="{% if listing.thumbnail %}{{ listing.thumbnail.url }}{% endif %}">🔧</span>
+                <span class="edit-listing-btn" title="Edit" style="cursor: pointer" data-id="{{ listing.id }}" data-brand="{{ listing.brand|default:'' }}" data-gender="{{ listing.gender }}" data-name="{{ listing.name }}" data-category="{{ listing.category.id }}" data-activity="{{ listing.activity.id|default:'' }}" data-vendor="{{ listing.vendor|default:'' }}" data-price="{{ listing.base_price|default:'' }}" data-mpn="{{ listing.model_number|default:'' }}" data-tags="{{ listing.tags|default:'' }}" data-status="{{ listing.listing_status }}" data-desc="{{ listing.description|default:'' }}" data-image="{% if listing.thumbnail %}{{ listing.thumbnail.url }}{% endif %}">🔧</span>
               </td>
 
               <td>
@@ -165,17 +165,28 @@
 
         <div class="form-group">
           <label>Product Thumbnail</label>
-          <input type="file" class="form-control" name="thumbnail" accept="image/*" multiple />
+          <input type="file" class="form-control" name="thumbnail" accept="image/*" />
         </div>
 
-        <div class="form-group">
-          <label>Listing Status</label>
-          <select class="form-control" name="listing_status">
-            <option value="active" selected>Active</option>
-            <option value="draft">Draft</option>
-            <option value="inactive">Inactive</option>
-            <option value="archived">Archived</option>
-          </select>
+        <div class="form-group flex-row align-center">
+          <div class="flex-1">
+            <label>Gender <span class="required">*</span></label>
+            <select class="form-control" name="gender" required>
+              <option value="unisex" selected>Unisex</option>
+              <option value="mens">Men's</option>
+              <option value="womens">Women's</option>
+              <option value="kids">Kids</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label>Listing Status</label>
+            <select class="form-control" name="listing_status">
+              <option value="active" selected>Active</option>
+              <option value="draft">Draft</option>
+              <option value="inactive">Inactive</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group">
@@ -267,19 +278,30 @@
         </div>
 
         <div class="form-group">
-          <label>Add/Change Product Images (Select multiple)</label>
-          <input type="file" class="form-control" name="thumbnail" accept="image/*" multiple />
-          <small style="color: #777; display: block; margin-top: 4px;">Leave blank to keep current images.</small>
+          <label>Add/Change Product Image</label>
+          <input type="file" class="form-control" name="thumbnail" accept="image/*" />
+          <small style="color: #777; display: block; margin-top: 4px;">Leave blank to keep current image.</small>
         </div>
 
-        <div class="form-group">
-          <label>Listing Status</label>
-          <select class="form-control" name="listing_status" id="edit-status">
-            <option value="active">Active</option>
-            <option value="draft">Draft</option>
-            <option value="inactive">Inactive</option>
-            <option value="archived">Archived</option>
-          </select>
+        <div class="form-group flex-row align-center">
+          <div class="flex-1">
+            <label>Gender <span class="required">*</span></label>
+            <select class="form-control" name="gender" id="edit-gender" required>
+              <option value="unisex">Unisex</option>
+              <option value="mens">Men's</option>
+              <option value="womens">Women's</option>
+              <option value="kids">Kids</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label>Listing Status</label>
+            <select class="form-control" name="listing_status" id="edit-status">
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="inactive">Inactive</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group">
